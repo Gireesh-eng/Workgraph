@@ -116,5 +116,3 @@ RETURN nodes(path) AS nodes, relationships(path) AS rels
 - **Graceful error handling**: Complete with empty, loading, and connection-error UI states if the database is unreachable.
 - **Responsive & Accessible**: Clean navigation, polished typography, and full scroll-snap immersion.
 
----
-*Created for the WEXA AI Take-Home Assignment.*
