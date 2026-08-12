@@ -1,16 +1,9 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SearchBar from "./SearchBar";
 
 export default function AppHeader({ query = "", showSearch = true, transparent = false }: { query?: string; showSearch?: boolean; transparent?: boolean }) {
-  const [scrolled, setScrolled] = useState(false);
   const [mobileSearch, setMobileSearch] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 3);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   return (
     <header className={`sticky top-0 z-30 h-16 transition-all duration-200 backdrop-blur-[10px] ${transparent
