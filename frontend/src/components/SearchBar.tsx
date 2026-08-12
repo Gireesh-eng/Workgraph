@@ -31,9 +31,31 @@ export default function SearchBar({ initialQuery = "", autoFocus = false, dark =
       </div>
     </form>
 
-    {showSuggestions && query.trim().length > 1 && (
+    {showSuggestions && (
       <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-xl border border-border bg-paper shadow-xl motion-safe:animate-fade-up" style={{ animationDuration: "150ms" }}>
-        {results.length > 0 ? (
+        {query.trim().length < 2 ? (
+          <div className="px-4 py-3">
+            <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-ink-400">Suggested Searches</p>
+            <ul className="-mx-2">
+              {[
+                { name: "Priya Sharma", type: "Person", icon: "Person" },
+                { name: "Data Pipeline v2", type: "Project", icon: "Project" },
+                { name: "Platform Engineering", type: "Team", icon: "Team" },
+                { name: "GraphQL", type: "Technology", icon: "Technology" }
+              ].map((suggestion, i) => (
+                <li key={i}>
+                  <button type="button" onMouseDown={(e) => { e.preventDefault(); navigate(`/search?q=${encodeURIComponent(suggestion.name)}`); setShowSuggestions(false); }} className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-surface-hover">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-sunken">
+                      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: `var(--${nodeTypeColors[suggestion.type as any]})` }} />
+                    </div>
+                    <span className="text-[14px] font-medium text-ink-900">{suggestion.name}</span>
+                    <span className="ml-auto font-mono text-[10px] text-ink-400 uppercase">{suggestion.type}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : results.length > 0 ? (
           <ul className="py-2">
             {results.map((item) => (
               <li key={item.id}>

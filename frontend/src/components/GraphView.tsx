@@ -32,12 +32,13 @@ export default function GraphView({ centerNode, connections }: { centerNode: Gra
   const selected = selectedIndex === null ? null : connections[selectedIndex];
   const activeIndex = hoveredIndex ?? selectedIndex;
   const scale = connections.length <= 10 ? 1 : 1 + (connections.length - 10) * 0.04;
-  const cx = 560 * scale;
-  const cy = 360 * scale;
   const rx = 410 * scale;
   const ry = 265 * scale;
-  const vw = 1120 * scale;
-  const vh = 720 * scale;
+  const padding = 180;
+  const vw = 1120 * scale + (padding * 2);
+  const vh = 720 * scale + (padding * 2);
+  const cx = (1120 * scale) / 2 + padding;
+  const cy = (720 * scale) / 2 + padding;
 
   const points = useMemo(() => connections.map((_, index) => {
     const angle = -Math.PI / 2 + (index * 2 * Math.PI) / connections.length;
