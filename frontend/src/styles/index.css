@@ -1,0 +1,88 @@
+@import "@fontsource/manrope/400.css";
+@import "@fontsource/manrope/500.css";
+@import "@fontsource/manrope/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    background: #F7F5F2;
+}
+
+#root {
+    min-height: 100vh;
+    overflow-x: clip;
+}
+
+body {
+    @apply m-0 bg-paper font-sans text-[16px] leading-6 text-ink-900 antialiased;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible {
+    box-shadow: 0 0 0 3px rgba(37, 35, 33, .14);
+    outline: none;
+}
+
+input:focus-visible,
+select:focus-visible {
+    outline: none;
+}
+
+::selection {
+    background: rgba(200, 102, 71, .18);
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #EFE9E2 0%, #E3DDD5 45%, #EFE9E2 100%);
+    background-size: 200% 100%;
+}
+
+.entity-badge {
+    @apply inline-flex items-center rounded-pill px-2.5 py-[3px] font-mono text-[11px] font-medium uppercase leading-4 tracking-[.03em];
+}
+
+.card {
+    @apply relative overflow-hidden rounded border border-border bg-surface;
+    box-shadow: 0 1px 1px rgba(55, 43, 33, .02), 0 8px 20px rgba(55, 43, 33, .035);
+}
+
+:root {
+    --person: #B5522E;
+    --team: #8B3460;
+    --project: #5442A6;
+    --task: #9C620E;
+    --technology: #256456;
+    --document: #3660A6;
+}
+
+.soft-grid {
+    background-image: linear-gradient(rgba(112, 91, 72, .018) 1px, transparent 1px), linear-gradient(90deg, rgba(112, 91, 72, .018) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+.eyebrow {
+    @apply text-[12px] font-semibold uppercase tracking-[.08em] text-ink-600;
+}
+
+.icon-button {
+    @apply inline-flex h-10 items-center justify-center rounded-control border border-border bg-surface px-3 text-[13px] font-semibold text-ink-900 transition-all duration-120 hover:-translate-y-px hover:border-border-strong hover:bg-surface-sunken active:translate-y-0;
+}
+
+.field-control {
+    @apply h-12 w-full rounded-control border border-border bg-surface px-4 text-[15px] font-medium text-ink-900 shadow-sm transition-all duration-120 hover:border-border-strong focus:border-ink-900 focus:ring-[3px] focus:ring-ink-900/10;
+}
+
+.surface-section {
+    @apply rounded-2xl border border-border bg-surface;
+    box-shadow: 0 12px 30px rgba(55, 43, 33, .035);
+}
