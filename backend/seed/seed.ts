@@ -38,7 +38,11 @@ async function seed() {
 
         const batchSize = 1000;
 
-        const batchCreateNodes = async (label: string, items: any[], queryBuilder: (l: string) => string) => {
+        const batchCreateNodes = async (
+            label: string,
+            items: any[],
+            queryBuilder: (l: string) => string,
+        ) => {
             console.log(`Creating ${label} nodes...`);
             for (let i = 0; i < items.length; i += batchSize) {
                 const batch = items.slice(i, i + batchSize);
@@ -49,19 +53,55 @@ async function seed() {
             console.log(`  ✓ ${items.length} ${label.toLowerCase()}`);
         };
 
-        await batchCreateNodes("Person", people, (l: string) => `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.name = p.name, n.role = p.role`);
-        await batchCreateNodes("Team", teams, (l: string) => `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.name = p.name`);
-        await batchCreateNodes("Project", projects, (l: string) => `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.name = p.name, n.status = p.status`);
-        await batchCreateNodes("Task", tasks, (l: string) => `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.title = p.title, n.status = p.status, n.name = p.title`);
-        await batchCreateNodes("Technology", technologies, (l: string) => `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.name = p.name`);
-        await batchCreateNodes("Document", documents, (l: string) => `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.title = p.title, n.name = p.title`);
+        await batchCreateNodes(
+            "Person",
+            people,
+            (l: string) =>
+                `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.name = p.name, n.role = p.role`,
+        );
+        await batchCreateNodes(
+            "Team",
+            teams,
+            (l: string) =>
+                `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.name = p.name`,
+        );
+        await batchCreateNodes(
+            "Project",
+            projects,
+            (l: string) =>
+                `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.name = p.name, n.status = p.status`,
+        );
+        await batchCreateNodes(
+            "Task",
+            tasks,
+            (l: string) =>
+                `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.title = p.title, n.status = p.status, n.name = p.title`,
+        );
+        await batchCreateNodes(
+            "Technology",
+            technologies,
+            (l: string) =>
+                `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.name = p.name`,
+        );
+        await batchCreateNodes(
+            "Document",
+            documents,
+            (l: string) =>
+                `UNWIND $batch AS p MERGE (n:${l} {id: p.id}) SET n.title = p.title, n.name = p.title`,
+        );
 
         // --- Relationships ---
 
         console.log("\nCreating relationships...");
         const validTypes = [
-            "MEMBER_OF", "WORKS_ON", "OWNS", "HAS_TASK",
-            "ASSIGNED_TO", "USES", "DOCUMENTED_BY", "DEPENDS_ON",
+            "MEMBER_OF",
+            "WORKS_ON",
+            "OWNS",
+            "HAS_TASK",
+            "ASSIGNED_TO",
+            "USES",
+            "DOCUMENTED_BY",
+            "DEPENDS_ON",
         ];
 
         const relsByType: Record<string, any[]> = {};
@@ -83,7 +123,7 @@ async function seed() {
                         `UNWIND $batch AS rel
                          MATCH (a {id: rel.from}), (b {id: rel.to})
                          MERGE (a)-[:${type}]->(b)`,
-                        { batch }
+                        { batch },
                     );
                 });
             }

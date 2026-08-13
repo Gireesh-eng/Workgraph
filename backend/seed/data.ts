@@ -302,19 +302,19 @@ export const relationships: RelationshipData[] = [
     { from: "proj8", to: "doc12", type: "DOCUMENTED_BY" },
 
     // DEPENDS_ON — Task → Task (creates chains for the variable-depth query)
-    { from: "t5", to: "t4", type: "DEPENDS_ON" },    // JWT migration depends on OAuth setup
-    { from: "t6", to: "t5", type: "DEPENDS_ON" },    // Integration tests depend on JWT migration
-    { from: "t6", to: "t4", type: "DEPENDS_ON" },    // Integration tests also depend on OAuth
-    { from: "t9", to: "t8", type: "DEPENDS_ON" },    // Data quality checks depend on ETL orchestrator
-    { from: "t9", to: "t7", type: "DEPENDS_ON" },    // Data quality checks depend on Kafka consumers
-    { from: "t3", to: "t2", type: "DEPENDS_ON" },    // Notification center depends on real-time widgets
-    { from: "t12", to: "t11", type: "DEPENDS_ON" },  // Offline sync depends on push notifications
-    { from: "t17", to: "t16", type: "DEPENDS_ON" },  // Migrate legacy endpoints depends on Kong gateway
-    { from: "t18", to: "t17", type: "DEPENDS_ON" },  // Rate limiting depends on endpoint migration
-    { from: "t20", to: "t19", type: "DEPENDS_ON" },  // Feature extraction depends on model training
-    { from: "t21", to: "t20", type: "DEPENDS_ON" },  // A/B testing depends on feature extraction
-    { from: "t23", to: "t22", type: "DEPENDS_ON" },  // Interactive examples depend on API docs
-    { from: "t25", to: "t24", type: "DEPENDS_ON" },  // Performance benchmarks depend on sandbox
-    { from: "t27", to: "t4", type: "DEPENDS_ON" },   // SSO depends on OAuth setup
-    { from: "t15", to: "t14", type: "DEPENDS_ON" },  // Encryption migration depends on SOC 2 audit
+    { from: "t5", to: "t4", type: "DEPENDS_ON" }, // JWT migration depends on OAuth setup
+    { from: "t6", to: "t5", type: "DEPENDS_ON" }, // Integration tests depend on JWT migration
+    { from: "t6", to: "t4", type: "DEPENDS_ON" }, // Integration tests also depend on OAuth
+    { from: "t9", to: "t8", type: "DEPENDS_ON" }, // Data quality checks depend on ETL orchestrator
+    { from: "t9", to: "t7", type: "DEPENDS_ON" }, // Data quality checks depend on Kafka consumers
+    { from: "t3", to: "t2", type: "DEPENDS_ON" }, // Notification center depends on real-time widgets
+    { from: "t12", to: "t11", type: "DEPENDS_ON" }, // Offline sync depends on push notifications
+    { from: "t17", to: "t16", type: "DEPENDS_ON" }, // Migrate legacy endpoints depends on Kong gateway
+    { from: "t18", to: "t17", type: "DEPENDS_ON" }, // Rate limiting depends on endpoint migration
+    { from: "t20", to: "t19", type: "DEPENDS_ON" }, // Feature extraction depends on model training
+    { from: "t21", to: "t20", type: "DEPENDS_ON" }, // A/B testing depends on feature extraction
+    { from: "t23", to: "t22", type: "DEPENDS_ON" }, // Interactive examples depend on API docs
+    { from: "t25", to: "t24", type: "DEPENDS_ON" }, // Performance benchmarks depend on sandbox
+    { from: "t27", to: "t4", type: "DEPENDS_ON" }, // SSO depends on OAuth setup
+    { from: "t15", to: "t14", type: "DEPENDS_ON" }, // Encryption migration depends on SOC 2 audit
 ];

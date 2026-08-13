@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 // Centralized error handler — every route benefits automatically via next(err)
-export function errorHandler(err: any, _req: Request, res: Response, _next: NextFunction) {
+export function errorHandler(err: any, _req: Request, res: Response, next: NextFunction) {
     // Neo4j connection failures get a specific 503 status
     const isDbError =
         err.code === "ServiceUnavailable" ||
@@ -28,4 +28,6 @@ export function errorHandler(err: any, _req: Request, res: Response, _next: Next
             code: err.code ?? "INTERNAL_ERROR",
         },
     });
+
+    next?.(err);
 }

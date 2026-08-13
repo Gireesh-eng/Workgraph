@@ -14,7 +14,7 @@ export function getDriver(): Driver {
 
         if (!uri || !user || !password) {
             throw new Error(
-                "Missing database credentials. Set NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD in .env"
+                "Missing database credentials. Set NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD in .env",
             );
         }
 

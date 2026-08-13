@@ -3,8 +3,17 @@ import { GraphNode, Connection, SearchResult, NodeType, StatsResponse } from "..
 
 // Helper to extract the primary label from a Neo4j node
 function toNodeType(labels: string[]): NodeType {
-    const validTypes: NodeType[] = ["Person", "Team", "Project", "Task", "Technology", "Document"];
-    return (labels.find((l) => validTypes.includes(l as NodeType)) as NodeType) ?? "Person";
+    const validTypes: NodeType[] = [
+        "Person",
+        "Team",
+        "Project",
+        "Task",
+        "Technology",
+        "Document",
+    ];
+    return (
+        (labels.find((l) => validTypes.includes(l as NodeType)) as NodeType) ?? "Person"
+    );
 }
 
 // Helper to map a Neo4j record's node to our GraphNode shape
@@ -33,7 +42,7 @@ export async function getEntityWithConnections(id: string) {
         // First get the node itself
         const nodeResult = await session.run(
             `MATCH (n {id: $id}) RETURN n, labels(n) AS types`,
-            { id }
+            { id },
         );
 
         if (nodeResult.records.length === 0) {
@@ -51,7 +60,7 @@ export async function getEntityWithConnections(id: string) {
               connected,
               labels(connected) AS connectedTypes
        LIMIT 500`,
-            { id }
+            { id },
         );
 
         const connections: Connection[] = connResult.records.map((rec: any) => {
@@ -93,7 +102,7 @@ export async function searchAll(query: string): Promise<SearchResult[]> {
           OR toLower(n.title) CONTAINS toLower($query)
        RETURN n, labels(n) AS types
        LIMIT 20`,
-            { query }
+            { query },
         );
 
         // For each result, build context by checking its relationships
@@ -106,7 +115,7 @@ export async function searchAll(query: string): Promise<SearchResult[]> {
                 `MATCH (n {id: $id})-[r]-(other)
          RETURN type(r) AS relType, other.name AS otherName, labels(other) AS otherTypes
          LIMIT 1`,
-                { id: graphNode.id }
+                { id: graphNode.id },
             );
 
             let context = "";
@@ -114,7 +123,6 @@ export async function searchAll(query: string): Promise<SearchResult[]> {
                 const cr = contextResult.records[0];
                 const rel = cr.get("relType");
                 const otherName = cr.get("otherName");
-                const otherType = toNodeType(cr.get("otherTypes"));
 
                 // Build human-readable context
                 if (rel === "MEMBER_OF") context = `Member of ${otherName}`;
@@ -154,7 +162,7 @@ export async function getProjectTechnologies(projectId: string): Promise<GraphNo
             `MATCH (p:Project {id: $id})-[:HAS_TASK]->(t:Task)-[:USES]->(tech:Technology)
        RETURN DISTINCT tech, labels(tech) AS types
        LIMIT 500`,
-            { id: projectId }
+            { id: projectId },
         );
 
         return result.records.map((rec: any) => {
@@ -179,7 +187,7 @@ export async function getDependencyChain(taskId: string): Promise<GraphNode[]> {
             `MATCH path = (t:Task {id: $id})-[:DEPENDS_ON*1..5]-(blocker:Task)
        RETURN DISTINCT blocker, labels(blocker) AS types
        LIMIT 500`,
-            { id: taskId }
+            { id: taskId },
         );
 
         return result.records.map((rec: any) => {
@@ -209,7 +217,7 @@ export async function getProjectTeamMembers(projectId: string): Promise<GraphNod
             `MATCH (proj:Project {id: $id})<-[:OWNS]-(team:Team)<-[:MEMBER_OF]-(person:Person)
        RETURN DISTINCT person, labels(person) AS types
        LIMIT 1000`,
-            { id: projectId }
+            { id: projectId },
         );
 
         return result.records.map((rec: any) => {
@@ -236,7 +244,7 @@ export async function getStats(): Promise<StatsResponse> {
         const result = await session.run(
             `MATCH (n)
        WITH labels(n)[0] AS label
-       RETURN label, count(*) AS count`
+       RETURN label, count(*) AS count`,
         );
 
         const counts: Record<string, number> = {};
@@ -247,14 +255,13 @@ export async function getStats(): Promise<StatsResponse> {
         });
 
         // Count total relationships
-        const relResult = await session.run(
-            `MATCH ()-[r]->() RETURN count(r) AS total`
-        );
-        const totalRels = relResult.records.length > 0
-            ? (relResult.records[0].get("total").toNumber
-                ? relResult.records[0].get("total").toNumber()
-                : Number(relResult.records[0].get("total")))
-            : 0;
+        const relResult = await session.run(`MATCH ()-[r]->() RETURN count(r) AS total`);
+        const totalRels =
+            relResult.records.length > 0
+                ? relResult.records[0].get("total").toNumber
+                    ? relResult.records[0].get("total").toNumber()
+                    : Number(relResult.records[0].get("total"))
+                : 0;
 
         return {
             people: counts["Person"] ?? 0,
@@ -281,7 +288,7 @@ export async function findShortestPath(fromId: string, toId: string) {
             `MATCH (a {id: $from}), (b {id: $to}),
              path = shortestPath((a)-[*..10]-(b))
        RETURN nodes(path) AS nodes, relationships(path) AS rels`,
-            { from: fromId, to: toId }
+            { from: fromId, to: toId },
         );
 
         if (result.records.length === 0) {
@@ -307,7 +314,8 @@ export async function findShortestPath(fromId: string, toId: string) {
 
             if (i < rels.length) {
                 hop.relationship = rels[i].type;
-                hop.direction = rels[i].start.toString() === node.elementId ? "out" : "in";
+                hop.direction =
+                    rels[i].start.toString() === node.elementId ? "out" : "in";
             }
 
             return hop;
@@ -327,7 +335,7 @@ export async function getAllNodes(): Promise<GraphNode[]> {
     const session = driver.session();
     try {
         const result = await session.run(
-            `MATCH (n) RETURN n, labels(n) AS types ORDER BY labels(n)[0], n.name LIMIT 100`
+            `MATCH (n) RETURN n, labels(n) AS types ORDER BY labels(n)[0], n.name LIMIT 100`,
         );
 
         return result.records.map((rec: any) => toGraphNode(rec));
