@@ -1,39 +1,45 @@
 # WorkGraph
 
 ## What my application does
-I built an app called WorkGraph. It helps you see how everything in an office is connected. Instead of just showing who the boss is, it shows who is working on what project, and what tools they are using. This makes it easy to find out how people, teams, tasks, and documents in a company link together.
+**WorkGraph** is a full-stack web application backed by **CognoDB** (a managed graph database supporting openCypher) that visualizes an organization's internal structure. It maps people, teams, projects, tasks, technologies, and documents to help users navigate complex dependencies that traditional organizational charts miss.
 
-## Why I chose this problem
-In many offices, it is hard to find out what other people are doing. Normal tools only show who reports to whom. They don't show how the actual work happens. I wanted to fix this by drawing lines between the workers, their projects, and their tools. This helps anyone find the right person to ask when they need help.
+## Why i chose this problem
+Modern organizations suffer from siloed information. Standard HR tools show reporting lines (who reports to whom), but they fail to capture the *actual* work structure: who is working on what project, what technologies that project uses, and which documents specify its requirements. WorkGraph was born out of the necessity to make cross-functional context readily available and highly searchable. By turning the organization into a graph, we empower employees to discover shared dependencies, locate experts, and see how their tasks tie into the broader company goals.
 
 ## Why a graph database makes sense
-When building this, I needed a way to store connections. In a normal database, linking people to teams to projects is very messy. 
+Organisational data is inherently a network of relationships. In a relational database (SQL), modeling "Who is working on the project that depends on the task blocked by the team using React?" requires brittle, complex `JOIN` operations across multiple junction tables (`ProjectTeam`, `TeamMember`, `TaskDependency`, etc.). 
 
-A graph database is great for this because:
-1. **It connects things directly:** It is easy to draw a path from a person to a project to a tool.
-2. **It can follow long paths:** I can ask the database to find all tasks blocking my project, even if the chain is 5 steps long.
-3. **It finds shortcuts:** It can quickly find the shortest path between two people who don't know each other.
+A graph database is the perfect fit for this use case because:
+1. **Relationships are First-Class Citizens**: We can natively traverse paths like `(Person)-[:WORKS_ON]->(Project)-[:USES]->(Technology)`.
+2. **Variable-Depth Traversals**: Some queries, such as "Find all blocking dependencies up to N levels deep," require recursive CTEs in SQL which are slow and hard to maintain. Cypher solves this trivially with `[:DEPENDS_ON*1..5]`.
+3. **Shortest Paths**: Discovering how any two isolated employees or projects are connected (e.g., to find an introduction or shared context) is a natural graph traversal that is computationally expensive in traditional RDBMS environments.
 
 ## Graph Data Model
-Here is how I store the data:
+Our data model captures the reality of a modern workplace by establishing clear Nodes, Relationships, and Properties.
 
-### Node Types (The things)
-- **Person**: A worker.
-- **Team**: A group of workers.
-- **Project**: A big piece of work.
-- **Task**: A small piece of work.
-- **Technology**: Tools used to do the work.
-- **Document**: Files with instructions.
+### Node Types
+- **Person**: Represents an employee or contractor.
+- **Team**: Represents a group of people.
+- **Project**: A high-level initiative.
+- **Task**: An actionable unit of work.
+- **Technology**: Tools, frameworks, or languages.
+- **Document**: Specifications, guides, or RFCs.
 
-### Relationship Types (The lines between things)
-- `MEMBER_OF`: A person is in a team.
-- `WORKS_ON`: A person does a project.
-- `OWNS`: A team runs a project, or a person wrote a document.
-- `HAS_TASK`: A project is made of tasks.
-- `USES`: A task needs a tool.
-- `DEPENDS_ON`: A task must wait for another task to finish.
-- `ASSIGNED_TO`: A person is supposed to do a task.
-- `DOCUMENTED_BY`: A project or tool has a help document.
+### Relationship Types
+- `MEMBER_OF`: Links Person to Team.
+- `WORKS_ON`: Links Person to Project.
+- `OWNS`: Links Team to Project, or Person to Document.
+- `HAS_TASK`: Links Project to Task.
+- `USES`: Links Project/Task to Technology.
+- `DEPENDS_ON`: Links Task to another Task (blockers).
+- `ASSIGNED_TO`: Links Task to Person.
+- `DOCUMENTED_BY`: Links Project/Document to Document.
+
+### Properties
+Every node contains basic properties like `id` and `name` (or `title`). Additional properties include:
+- **Person**: `role`
+- **Project**: `status`
+- **Task**: `status`
 
 ### Data Model Diagram
 ```mermaid
@@ -59,72 +65,73 @@ graph TD;
 ```
 
 ## Main Cypher queries and what they do
-I used a language called Cypher to ask the database questions. Here are three examples:
 
-### 1. Finding what is blocking a task
-**What it does:** It looks to see if a task is waiting for another task. Then it checks if that second task is waiting for a third task, up to 5 times.
+All queries are parameterized via the Neo4j JavaScript Driver to prevent injection. 
+
+### 1. Multi-Hop Variable-Depth Traversal
+**What it does:** Recursively traverses the `DEPENDS_ON` relationship to find a chain of blocking tasks up to a depth of 5. Useful for finding root blockers for a given task.
 ```cypher
 MATCH path = (t:Task {id: $id})-[:DEPENDS_ON*1..5]-(blocker:Task)
 RETURN DISTINCT blocker, labels(blocker) AS types
 ```
 
-### 2. Finding an entire team
-**What it does:** It starts from a project, finds which team runs it, and then lists all the people in that team.
+### 2. Complex Cross-Team Context
+**What it does:** Finds all individuals that belong to a team that owns a specific project. This multi-hop traversal natively surfaces cross-functional boundaries.
 ```cypher
 MATCH (proj:Project {id: $id})<-[:OWNS]-(team:Team)<-[:MEMBER_OF]-(person:Person)
 RETURN DISTINCT person, labels(person) AS types
 ```
 
-### 3. Finding the shortest path
-**What it does:** It finds the fastest way to connect any two things in the company, using up to 10 connections.
+### 3. Shortest Path Algorithm
+**What it does:** Calculates the shortest sequence of relationships connecting any two items in the organization (up to 10 hops). Useful for discovering mutual context or introductions between two isolated employees.
 ```cypher
 MATCH (a {id: $from}), (b {id: $to}),
       path = shortestPath((a)-[*..10]-(b))
 RETURN nodes(path) AS nodes, relationships(path) AS rels
 ```
 
-## How to create the CognoDB database
-1. Go to [console.cognodb.com](https://console.cognodb.com/).
-2. Make a free (c0) database.
-3. Wait for it to be ready.
-4. Save the `bolt+s://` URL and the password for the `cognodb` user.
+## How to create/configure the CognoDB instance
+1. Sign up/log in to [console.cognodb.com](https://console.cognodb.com/).
+2. Create a free (c0) instance.
+3. Wait for the instance to provision.
+4. Once provisioned, locate your connection credentials under the settings tab. You will need the `bolt+s://` URI and the generated password for the `cognodb` user.
 
 ## How to run the project locally
 
-### What you need
-- Node.js installed on your computer.
-- Your CognoDB connection details from earlier.
+### Prerequisites
+- Node.js (v16+)
+- CognoDB Cloud connection details
 
-### Backend Setup
-1. Open a terminal and go to the `backend` folder:
+### Backend Setup & Data Seeding
+1. Open a terminal and navigate to the `backend` directory:
    ```bash
    cd backend
    npm install
    ```
-2. Copy `.env.example` to a new file named `.env` and put your database details in it:
+2. Copy `.env.example` to `.env` and fill in your CognoDB connection details:
    ```env
    NEO4J_URI=bolt+s://<instance-id>.databases.cognodb.cloud
    NEO4J_USER=cognodb
    NEO4J_PASSWORD=<your-generated-password>
    PORT=3001
    ```
-3. **Fill the database** with fake practice data:
+3. **Seed the database** with dummy organizational data:
    ```bash
    npm run seed
    ```
-4. Start the backend:
+4. Start the backend DEV server:
    ```bash
    npm run dev
    ```
 
 ### Frontend Setup
-1. Open a new terminal and go to the `frontend` folder:
+1. Open a new terminal and navigate to the `frontend` directory:
    ```bash
    cd frontend
    npm install
    ```
-2. Start the frontend:
+2. Start the Vite development server:
    ```bash
    npm run dev
    ```
-3. Open `http://localhost:5173` in your web browser to see it.
+3. Open `http://localhost:5173` in your browser.
