@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
-import { getStats } from "../api/client";
-import type { StatsResponse } from "../types";
+import { getStats, getAllNodes } from "../api/client";
+import type { StatsResponse, GraphNode } from "../types";
 import { useInView, useCountUp } from "../hooks/useAnimatedStats";
 
 function AnimatedNumber({
@@ -103,19 +103,34 @@ const dbSpecs = [
 
 export default function Home() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
+  const [exampleNodeMap, setExampleNodeMap] = useState<GraphNode | null>(null);
+  const [exampleNodeProfile, setExampleNodeProfile] =
+    useState<GraphNode | null>(null);
+
   useEffect(() => {
     getStats()
       .then(setStats)
+      .catch(() => undefined);
+
+    getAllNodes()
+      .then((data) => {
+        if (data.nodes && data.nodes.length > 0) {
+          const person = data.nodes.find((n) => n.type === "Person");
+          const project = data.nodes.find((n) => n.type === "Project");
+          setExampleNodeMap(person || data.nodes[0]);
+          setExampleNodeProfile(project || data.nodes[1] || data.nodes[0]);
+        }
+      })
       .catch(() => undefined);
   }, []);
 
   const totalNodes = stats
     ? stats.people +
-    stats.teams +
-    stats.projects +
-    stats.tasks +
-    stats.technologies +
-    stats.documents
+      stats.teams +
+      stats.projects +
+      stats.tasks +
+      stats.technologies +
+      stats.documents
     : 0;
 
   const { ref: statsRef, isInView: statsInView } = useInView({
@@ -421,46 +436,55 @@ export default function Home() {
 
             {/* 2×2 card grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 relative z-10 border-t border-l border-gray-400">
-              {protocols.map((p) => (
-                <Link
-                  key={p.code}
-                  to={p.link}
-                  className="bg-transparent p-10 hover:bg-black hover:text-white transition-colors group flex flex-col justify-between h-[320px] border-b border-r border-gray-400 relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 grid-bg-brutal-dark pointer-events-none hidden group-hover:block" />
-                  <div className="relative z-10 block">
-                    <div className="flex justify-end mb-6">
-                      <svg
-                        className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="square"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                      </svg>
+              {protocols.map((p) => {
+                let href = p.link;
+                if (p.code === "Explore" && exampleNodeMap) {
+                  href = `/entity/${exampleNodeMap.type}/${exampleNodeMap.id}`;
+                } else if (p.code === "Inspect" && exampleNodeProfile) {
+                  href = `/entity/${exampleNodeProfile.type}/${exampleNodeProfile.id}`;
+                }
+
+                return (
+                  <Link
+                    key={p.code}
+                    to={href}
+                    className="bg-transparent p-10 hover:bg-black hover:text-white transition-colors group flex flex-col justify-between h-[320px] border-b border-r border-gray-400 relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 grid-bg-brutal-dark pointer-events-none hidden group-hover:block" />
+                    <div className="relative z-10 block">
+                      <div className="flex justify-end mb-6">
+                        <svg
+                          className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="square"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
+                      </div>
+                      <h4 className="font-display text-2xl uppercase mb-4 font-bold">
+                        {p.title}
+                      </h4>
+                      <p className="text-sm text-gray-800 group-hover:text-gray-300 transition-colors">
+                        {p.desc}
+                      </p>
                     </div>
-                    <h4 className="font-display text-2xl uppercase mb-4 font-bold">
-                      {p.title}
-                    </h4>
-                    <p className="text-sm text-gray-800 group-hover:text-gray-300 transition-colors">
-                      {p.desc}
-                    </p>
-                  </div>
-                  <ul className="text-xs space-y-3 group-hover:border-white/20 pt-4 transition-colors relative z-10 block">
-                    {p.features.map((f) => (
-                      <li key={f} className="flex items-center">
-                        <span className="w-1.5 h-1.5 bg-current mr-3" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </Link>
-              ))}
+                    <ul className="text-xs space-y-3 group-hover:border-white/20 pt-4 transition-colors relative z-10 block">
+                      {p.features.map((f) => (
+                        <li key={f} className="flex items-center">
+                          <span className="w-1.5 h-1.5 bg-current mr-3" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
