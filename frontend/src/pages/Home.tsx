@@ -159,7 +159,14 @@ export default function Home() {
           <div className="text-right text-xs leading-tight opacity-50 uppercase">
             <div>SYS.STATUS: ONLINE</div>
             <div>GRAPH DATABASE</div>
-            <div>NODES: {stats ? totalNodes : "—"}</div>
+            <div>
+              NODES:{" "}
+              {stats ? (
+                totalNodes
+              ) : (
+                <span className="opacity-30 animate-pulse">...</span>
+              )}
+            </div>
           </div>
         </header>
 
@@ -250,7 +257,9 @@ export default function Home() {
                         trigger={statsInView}
                       />
                     ) : (
-                      "—"
+                      <span className="opacity-10 animate-pulse text-gray-300">
+                        0
+                      </span>
                     )}
                   </span>
                 </div>
@@ -268,7 +277,9 @@ export default function Home() {
                         trigger={statsInView}
                       />
                     ) : (
-                      "—"
+                      <span className="opacity-10 animate-pulse text-gray-300">
+                        0
+                      </span>
                     )}
                   </span>
                 </div>
@@ -291,9 +302,13 @@ export default function Home() {
                 </span>
                 <div className="mt-4">
                   <span className="font-display text-5xl lg:text-6xl font-black text-gray-900">
-                    {stats && totalNodes > 0
-                      ? ((stats.relationships * 2) / totalNodes).toFixed(1)
-                      : "—"}
+                    {stats && totalNodes > 0 ? (
+                      ((stats.relationships * 2) / totalNodes).toFixed(1)
+                    ) : (
+                      <span className="opacity-10 animate-pulse text-gray-300">
+                        0.0
+                      </span>
+                    )}
                   </span>
                 </div>
               </div>
@@ -334,7 +349,9 @@ export default function Home() {
                         {stats ? (
                           <AnimatedNumber value={count} trigger={statsInView} />
                         ) : (
-                          "—"
+                          <span className="opacity-10 animate-pulse text-gray-300">
+                            0
+                          </span>
                         )}
                       </span>
                       {/* Mini bar */}
