@@ -3,6 +3,20 @@ import { Link } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import { getStats } from "../api/client";
 import type { StatsResponse } from "../types";
+import { useInView, useCountUp } from "../hooks/useAnimatedStats";
+
+function AnimatedNumber({
+  value,
+  duration = 800,
+  trigger,
+}: {
+  value: number;
+  duration?: number;
+  trigger: boolean;
+}) {
+  const count = useCountUp(value, duration, trigger);
+  return <>{count}</>;
+}
 
 const protocols = [
   {
@@ -36,19 +50,55 @@ const protocols = [
 ];
 
 const entityTypesMeta = [
-  { key: "people" as const, label: "People", color: "var(--person)", icon: "👤" },
+  {
+    key: "people" as const,
+    label: "People",
+    color: "var(--person)",
+    icon: "👤",
+  },
   { key: "teams" as const, label: "Teams", color: "var(--team)", icon: "👥" },
-  { key: "projects" as const, label: "Projects", color: "var(--project)", icon: "📁" },
+  {
+    key: "projects" as const,
+    label: "Projects",
+    color: "var(--project)",
+    icon: "📁",
+  },
   { key: "tasks" as const, label: "Tasks", color: "var(--task)", icon: "✅" },
-  { key: "technologies" as const, label: "Technologies", color: "var(--technology)", icon: "⚙️" },
-  { key: "documents" as const, label: "Documents", color: "var(--document)", icon: "📄" },
+  {
+    key: "technologies" as const,
+    label: "Technologies",
+    color: "var(--technology)",
+    icon: "⚙️",
+  },
+  {
+    key: "documents" as const,
+    label: "Documents",
+    color: "var(--document)",
+    icon: "📄",
+  },
 ];
 
 const dbSpecs = [
-  { label: "Database Engine", value: "CognoDB / Neo4j", detail: "Graph-native storage" },
-  { label: "Query Language", value: "Cypher", detail: "Declarative pattern matching" },
-  { label: "Max Traversal Depth", value: "10 Hops", detail: "Variable-length paths" },
-  { label: "Connection Types", value: "8 Types", detail: "WORKS_ON, OWNS, USES…" },
+  {
+    label: "Database Engine",
+    value: "CognoDB / Neo4j",
+    detail: "Graph-native storage",
+  },
+  {
+    label: "Query Language",
+    value: "Cypher",
+    detail: "Declarative pattern matching",
+  },
+  {
+    label: "Max Traversal Depth",
+    value: "10 Hops",
+    detail: "Variable-length paths",
+  },
+  {
+    label: "Connection Types",
+    value: "8 Types",
+    detail: "WORKS_ON, OWNS, USES…",
+  },
 ];
 
 export default function Home() {
@@ -60,8 +110,17 @@ export default function Home() {
   }, []);
 
   const totalNodes = stats
-    ? stats.people + stats.teams + stats.projects + stats.tasks + stats.technologies + stats.documents
+    ? stats.people +
+    stats.teams +
+    stats.projects +
+    stats.tasks +
+    stats.technologies +
+    stats.documents
     : 0;
+
+  const { ref: statsRef, isInView: statsInView } = useInView({
+    threshold: 0.1,
+  });
 
   return (
     <div style={{ fontFamily: "'JetBrains Mono', monospace" }}>
@@ -85,9 +144,7 @@ export default function Home() {
           <div className="text-right text-xs leading-tight opacity-50 uppercase">
             <div>SYS.STATUS: ONLINE</div>
             <div>GRAPH DATABASE</div>
-            <div>
-              NODES: {stats ? totalNodes : "—"}
-            </div>
+            <div>NODES: {stats ? totalNodes : "—"}</div>
           </div>
         </header>
 
@@ -102,8 +159,9 @@ export default function Home() {
               </div>
               <div className="mt-8 max-w-lg border-l-2 border-white/40 pl-6 ml-2">
                 <p className="text-sm uppercase leading-relaxed opacity-60">
-                  Map your entire organization. Explore relationships between people, projects, tasks,
-                  technology, and documents — all from one searchable graph.
+                  Map your entire organization. Explore relationships between
+                  people, projects, tasks, technology, and documents — all from
+                  one searchable graph.
                 </p>
               </div>
             </div>
@@ -123,10 +181,7 @@ export default function Home() {
             <br />
             Navigate Your Company
           </div>
-          <Link
-            to="/search"
-            className="group flex items-center gap-4"
-          >
+          <Link to="/search" className="group flex items-center gap-4">
             <div className="text-right">
               <div className="text-xs uppercase tracking-widest mb-1 opacity-50 group-hover:opacity-100 transition-opacity">
                 Initialize Search
@@ -139,82 +194,142 @@ export default function Home() {
         </footer>
       </section>
 
-      <div className="relative bg-white text-black border-t border-gray-300">
+      <div className="relative bg-white text-gray-900 border-t border-gray-200">
         <div className="absolute inset-0 grid-bg-brutal pointer-events-none" />
 
         {/* ═══════════════════════════════════════════════════
           SECTION 2 — DATABASE OVERVIEW (Stats Dashboard)
       ═══════════════════════════════════════════════════ */}
-        <section className="relative z-10">
+        <section className="relative z-10" ref={statsRef}>
           <div className="relative z-10 max-w-[1280px] mx-auto p-6 lg:p-12">
             {/* Section header */}
             <header className="mb-10">
               <div className="flex items-baseline gap-4 mb-2">
-                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-400">[ SECTION 02 ]</span>
-                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-400">DATABASE OVERVIEW</span>
+                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-500">
+                  [ SECTION 02 ]
+                </span>
+                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-500">
+                  DATABASE OVERVIEW
+                </span>
               </div>
               <h2 className="font-display text-5xl lg:text-6xl font-medium uppercase leading-tight">
                 Live
-                <span className="font-light italic text-gray-500 ml-4">Statistics</span>
+                <span className="font-light italic text-gray-600 ml-4">
+                  Statistics
+                </span>
               </h2>
             </header>
 
             {/* Main stats row */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-300 border border-gray-300 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-200 border border-gray-200 mb-8">
               {/* Nodes */}
               <div className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[140px]">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Total Nodes</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                  Total Nodes
+                </span>
                 <div className="mt-4">
-                  <span className="font-display text-5xl lg:text-6xl font-black text-black">{stats ? totalNodes : "—"}</span>
+                  <span className="font-display text-5xl lg:text-6xl font-black text-gray-900">
+                    {stats ? (
+                      <AnimatedNumber
+                        value={totalNodes}
+                        trigger={statsInView}
+                      />
+                    ) : (
+                      "—"
+                    )}
+                  </span>
                 </div>
               </div>
               {/* Relationships */}
               <div className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[140px]">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Relationships</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                  Relationships
+                </span>
                 <div className="mt-4">
-                  <span className="font-display text-5xl lg:text-6xl font-black text-black">{stats ? stats.relationships : "—"}</span>
+                  <span className="font-display text-5xl lg:text-6xl font-black text-gray-900">
+                    {stats ? (
+                      <AnimatedNumber
+                        value={stats.relationships}
+                        trigger={statsInView}
+                      />
+                    ) : (
+                      "—"
+                    )}
+                  </span>
                 </div>
               </div>
               {/* Entity Types */}
               <div className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[140px]">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Entity Types</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                  Entity Types
+                </span>
                 <div className="mt-4">
-                  <span className="font-display text-5xl lg:text-6xl font-black text-black">6</span>
+                  <span className="font-display text-5xl lg:text-6xl font-black text-gray-900">
+                    <AnimatedNumber value={6} trigger={statsInView} />
+                  </span>
                 </div>
               </div>
               {/* Avg connections */}
               <div className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[140px]">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Avg Connections</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                  Avg Connections
+                </span>
                 <div className="mt-4">
-                  <span className="font-display text-5xl lg:text-6xl font-black text-black">
-                    {stats && totalNodes > 0 ? ((stats.relationships * 2) / totalNodes).toFixed(1) : "—"}
+                  <span className="font-display text-5xl lg:text-6xl font-black text-gray-900">
+                    {stats && totalNodes > 0
+                      ? ((stats.relationships * 2) / totalNodes).toFixed(1)
+                      : "—"}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Per-type breakdown */}
-            <div className="border border-gray-300">
-              <div className="px-6 py-4 border-b border-gray-300 flex items-center justify-between bg-white text-black">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Entity Breakdown</span>
-                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">[ BY TYPE ]</span>
+            <div className="border border-gray-200">
+              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white text-gray-900">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                  Entity Breakdown
+                </span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                  [ BY TYPE ]
+                </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-gray-300">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-gray-200">
                 {entityTypesMeta.map((et) => {
                   const count = stats ? stats[et.key] : 0;
-                  const pct = stats && totalNodes > 0 ? Math.round((count / totalNodes) * 100) : 0;
+                  const pct =
+                    stats && totalNodes > 0
+                      ? Math.round((count / totalNodes) * 100)
+                      : 0;
                   return (
-                    <div key={et.key} className="bg-white p-5 flex flex-col gap-3 group hover:bg-gray-50 transition-colors">
+                    <div
+                      key={et.key}
+                      className="bg-white p-5 flex flex-col gap-3 group hover:bg-gray-50 transition-colors"
+                    >
                       <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 border border-gray-200" style={{ backgroundColor: et.color }} />
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">{et.label}</span>
+                        <span
+                          className="w-2.5 h-2.5 border border-gray-200"
+                          style={{ backgroundColor: et.color }}
+                        />
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-gray-600">
+                          {et.label}
+                        </span>
                       </div>
-                      <span className="font-display text-3xl font-bold text-black">{stats ? count : "—"}</span>
+                      <span className="font-display text-3xl font-bold text-gray-900">
+                        {stats ? (
+                          <AnimatedNumber value={count} trigger={statsInView} />
+                        ) : (
+                          "—"
+                        )}
+                      </span>
                       {/* Mini bar */}
-                      <div className="w-full h-1 bg-gray-200 mt-auto">
+                      <div className="w-full h-1 bg-gray-100 mt-auto">
                         <div
                           className="h-full transition-all duration-700"
-                          style={{ width: `${pct}%`, backgroundColor: et.color }}
+                          style={{
+                            width: `${pct}%`,
+                            backgroundColor: et.color,
+                          }}
                         />
                       </div>
                     </div>
@@ -232,23 +347,38 @@ export default function Home() {
           <div className="relative z-10 max-w-[1280px] mx-auto p-6 lg:p-12">
             <header className="mb-10">
               <div className="flex items-baseline gap-4 mb-2">
-                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-400">[ SECTION 03 ]</span>
-                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-400">SPECIFICATIONS</span>
+                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-500">
+                  [ SECTION 03 ]
+                </span>
+                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-500">
+                  SPECIFICATIONS
+                </span>
               </div>
-              <h2 className="font-display text-5xl lg:text-6xl font-medium uppercase leading-tight">
+              <h2 className="font-display text-5xl lg:text-6xl font-medium uppercase leading-tight text-gray-900">
                 Graph Database
                 <br />
-                <span className="font-light italic text-gray-400">Highlights</span>
+                <span className="font-light italic text-gray-500">
+                  Highlights
+                </span>
               </h2>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-gray-300 border border-gray-300">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-gray-200 border border-gray-200">
               {dbSpecs.map((spec) => (
-                <div key={spec.label} className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[180px]">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">{spec.label}</span>
+                <div
+                  key={spec.label}
+                  className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[180px]"
+                >
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                    {spec.label}
+                  </span>
                   <div className="mt-4">
-                    <div className="font-display text-2xl font-bold uppercase text-black">{spec.value}</div>
-                    <p className="mt-2 font-mono text-[11px] text-gray-500 uppercase">{spec.detail}</p>
+                    <div className="font-display text-2xl font-bold uppercase text-gray-900">
+                      {spec.value}
+                    </div>
+                    <p className="mt-2 font-mono text-[11px] text-gray-600 uppercase">
+                      {spec.detail}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -267,34 +397,39 @@ export default function Home() {
               <h2 className="font-display text-6xl lg:text-7xl font-medium uppercase leading-tight mb-8">
                 Architecting
                 <br />
-                <span className="font-light italic text-gray-400">Your Work Map</span>
+                <span className="font-light italic text-gray-400">
+                  Your Work Map
+                </span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <p className="text-sm uppercase leading-relaxed text-gray-600">
-                  WorkGraph operates at the intersection of data and relationships. We don't just
-                  store entities; we connect them. From team structures to technology stacks, WorkGraph
-                  provides the toolkit for organizational intelligence.
+                  WorkGraph operates at the intersection of data and
+                  relationships. We don't just store entities; we connect them.
+                  From team structures to technology stacks, WorkGraph provides
+                  the toolkit for organizational intelligence.
                 </p>
-
               </div>
             </header>
 
             {/* Protocol cards label */}
-            <div className="flex items-baseline justify-between border-b border-gray-600 pb-4 mb-8">
-              <h3 className="font-display text-3xl uppercase">Core Capabilities</h3>
+            <div className="flex items-end justify-between border-b border-gray-600 pb-4 mb-[40px] h-[80px]">
+              <h3 className="font-display text-3xl uppercase">
+                Core Capabilities
+              </h3>
               <span className="text-xs opacity-50">[ EXPLORE GRAPH ]</span>
             </div>
 
             {/* 2×2 card grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-300 border border-gray-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 relative z-10 border-t border-l border-gray-400">
               {protocols.map((p) => (
                 <Link
                   key={p.code}
                   to={p.link}
-                  className="bg-white p-8 hover:bg-black hover:text-white transition-colors group flex flex-col justify-between min-h-[260px]"
+                  className="bg-transparent p-10 hover:bg-black hover:text-white transition-colors group flex flex-col justify-between h-[320px] border-b border-r border-gray-400 relative overflow-hidden"
                 >
-                  <div>
-                    <div className="flex justify-end mb-8">
+                  <div className="absolute inset-0 grid-bg-brutal-dark pointer-events-none hidden group-hover:block" />
+                  <div className="relative z-10 block">
+                    <div className="flex justify-end mb-6">
                       <svg
                         className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity"
                         fill="none"
@@ -309,15 +444,17 @@ export default function Home() {
                         />
                       </svg>
                     </div>
-                    <h4 className="font-display text-2xl uppercase mb-4 font-bold">{p.title}</h4>
-                    <p className="text-sm text-gray-500 group-hover:text-gray-300 mb-6 transition-colors">
+                    <h4 className="font-display text-2xl uppercase mb-4 font-bold">
+                      {p.title}
+                    </h4>
+                    <p className="text-sm text-gray-800 group-hover:text-gray-300 transition-colors">
                       {p.desc}
                     </p>
                   </div>
-                  <ul className="text-xs space-y-2 border-t border-gray-200 group-hover:border-white/20 pt-4 transition-colors">
+                  <ul className="text-xs space-y-3 group-hover:border-white/20 pt-4 transition-colors relative z-10 block">
                     {p.features.map((f) => (
                       <li key={f} className="flex items-center">
-                        <span className="w-1 h-1 bg-current mr-2" />
+                        <span className="w-1.5 h-1.5 bg-current mr-3" />
                         {f}
                       </li>
                     ))}
@@ -327,7 +464,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
       </div>
 
       {/* ═══════════════════════════════════════════════════
@@ -351,7 +487,10 @@ export default function Home() {
             <h5 className="font-bold mb-4">Navigate</h5>
             <ul className="space-y-2 text-white/50">
               <li>
-                <Link to="/search" className="hover:text-white transition-colors">
+                <Link
+                  to="/search"
+                  className="hover:text-white transition-colors"
+                >
                   Search
                 </Link>
               </li>
@@ -367,9 +506,7 @@ export default function Home() {
             <ul className="space-y-2 text-white/50">
               <li>Status: Online</li>
               <li>Database: Neo4j</li>
-              <li>
-                v.1.0.0
-              </li>
+              <li>v.1.0.0</li>
             </ul>
           </div>
         </div>
