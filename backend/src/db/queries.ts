@@ -49,7 +49,8 @@ export async function getEntityWithConnections(id: string) {
        RETURN type(r) AS relType,
               CASE WHEN startNode(r) = n THEN 'out' ELSE 'in' END AS direction,
               connected,
-              labels(connected) AS connectedTypes`,
+              labels(connected) AS connectedTypes
+       LIMIT 500`,
             { id }
         );
 
@@ -151,7 +152,8 @@ export async function getProjectTechnologies(projectId: string): Promise<GraphNo
     try {
         const result = await session.run(
             `MATCH (p:Project {id: $id})-[:HAS_TASK]->(t:Task)-[:USES]->(tech:Technology)
-       RETURN DISTINCT tech, labels(tech) AS types`,
+       RETURN DISTINCT tech, labels(tech) AS types
+       LIMIT 500`,
             { id: projectId }
         );
 
@@ -175,7 +177,8 @@ export async function getDependencyChain(taskId: string): Promise<GraphNode[]> {
     try {
         const result = await session.run(
             `MATCH path = (t:Task {id: $id})-[:DEPENDS_ON*1..5]-(blocker:Task)
-       RETURN DISTINCT blocker, labels(blocker) AS types`,
+       RETURN DISTINCT blocker, labels(blocker) AS types
+       LIMIT 500`,
             { id: taskId }
         );
 
@@ -204,7 +207,8 @@ export async function getProjectTeamMembers(projectId: string): Promise<GraphNod
     try {
         const result = await session.run(
             `MATCH (proj:Project {id: $id})<-[:OWNS]-(team:Team)<-[:MEMBER_OF]-(person:Person)
-       RETURN DISTINCT person, labels(person) AS types`,
+       RETURN DISTINCT person, labels(person) AS types
+       LIMIT 1000`,
             { id: projectId }
         );
 
@@ -242,11 +246,24 @@ export async function getStats(): Promise<StatsResponse> {
                 : Number(rec.get("count"));
         });
 
+        // Count total relationships
+        const relResult = await session.run(
+            `MATCH ()-[r]->() RETURN count(r) AS total`
+        );
+        const totalRels = relResult.records.length > 0
+            ? (relResult.records[0].get("total").toNumber
+                ? relResult.records[0].get("total").toNumber()
+                : Number(relResult.records[0].get("total")))
+            : 0;
+
         return {
             people: counts["Person"] ?? 0,
+            teams: counts["Team"] ?? 0,
             projects: counts["Project"] ?? 0,
             tasks: counts["Task"] ?? 0,
             technologies: counts["Technology"] ?? 0,
+            documents: counts["Document"] ?? 0,
+            relationships: totalRels,
         };
     } finally {
         await session.close();

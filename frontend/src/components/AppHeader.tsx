@@ -6,46 +6,40 @@ export default function AppHeader({ query = "", showSearch = true, transparent =
   const [mobileSearch, setMobileSearch] = useState(false);
 
   return (
-    <header className={`sticky top-0 z-30 h-16 transition-all duration-200 backdrop-blur-[10px] ${transparent
-      ? "bg-transparent border-b border-white/[.12]"
-      : "bg-paper/95 border-b border-[#D7CEC4] shadow-[0_1px_3px_rgba(55,43,33,.05)]"
+    <header className={`sticky top-0 z-30 h-20 transition-colors duration-200 ${transparent
+      ? "bg-transparent border-b border-white/20"
+      : "bg-[#0A0A0A] border-b border-white/20 text-white"
       }`}>
       <div className="mx-auto flex h-full max-w-[1280px] items-center gap-6 px-6 lg:px-10">
         {/* Logo */}
         <Link to="/" className="flex shrink-0 items-center gap-2 group">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-person shadow-sm">
-            <svg className="h-4 w-4 text-white" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="3" r="2" fill="currentColor" />
-              <circle cx="3" cy="12" r="2" fill="currentColor" fillOpacity=".75" />
-              <circle cx="13" cy="12" r="2" fill="currentColor" fillOpacity=".75" />
-              <line x1="8" y1="5" x2="3" y2="10" stroke="currentColor" strokeWidth="1.2" strokeOpacity=".6" />
-              <line x1="8" y1="5" x2="13" y2="10" stroke="currentColor" strokeWidth="1.2" strokeOpacity=".6" />
-            </svg>
-          </span>
-          <span className={`text-[17px] font-bold tracking-[-.02em] ${transparent ? "text-white" : "text-ink-900"}`}>
-            Work<span className="text-person">Graph</span>
+          <span className={`font-display text-2xl font-bold tracking-tighter text-white`}>
+            Work<span style={{ color: "var(--person)" }}>Graph</span>
           </span>
         </Link>
 
         {/* Search bar */}
         {showSearch && (
-          <div className="hidden w-full max-w-[440px] sm:block">
-            <SearchBar initialQuery={query} dark={transparent} />
+          <div className="hidden w-full max-w-[440px] sm:block ml-4">
+            <SearchBar initialQuery={query} dark={true} />
           </div>
         )}
 
         {/* Nav */}
-        <nav className="ml-auto flex items-center gap-1">
+        <nav className="ml-auto flex items-center gap-6 font-mono text-xs uppercase tracking-widest">
+          {showSearch && (
+            <div className="hidden sm:flex gap-6">
+              <Link to="/path" className={`text-white/70 hover:text-white transition-colors`}>PathFinder</Link>
+            </div>
+          )}
+
           {showSearch && (
             <button
               onClick={() => setMobileSearch(!mobileSearch)}
               aria-label="Open search"
-              className={`flex h-9 w-9 items-center justify-center rounded-lg sm:hidden ${transparent
-                ? "text-white/60 hover:bg-white/[.08] hover:text-white"
-                : "text-ink-600 hover:bg-surface-sunken hover:text-ink-900"
-                }`}
+              className={`flex h-9 w-9 items-center justify-center border sm:hidden border-white/20 text-white/60 hover:bg-white hover:text-black transition-colors`}
             >
-              <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="11" cy="11" r="6" />
                 <path d="m16 16 4 4" />
               </svg>
@@ -55,8 +49,8 @@ export default function AppHeader({ query = "", showSearch = true, transparent =
       </div>
 
       {showSearch && mobileSearch && (
-        <div className={`border-t px-6 py-3 sm:hidden ${transparent ? "border-white/10 bg-ink-900" : "border-border bg-paper"}`}>
-          <SearchBar initialQuery={query} autoFocus dark={transparent} />
+        <div className={`border-t px-6 py-3 sm:hidden border-white/20 bg-[#0A0A0A]`}>
+          <SearchBar initialQuery={query} autoFocus dark={true} />
         </div>
       )}
     </header>

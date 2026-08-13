@@ -33,9 +33,12 @@ export interface SearchResponse {
 
 export interface StatsResponse {
     people: number;
+    teams: number;
     projects: number;
     tasks: number;
     technologies: number;
+    documents: number;
+    relationships: number;
 }
 
 export interface PathHop {

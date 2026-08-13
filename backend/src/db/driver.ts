@@ -18,7 +18,10 @@ export function getDriver(): Driver {
             );
         }
 
-        driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+        driver = neo4j.driver(uri, neo4j.auth.basic(user, password), {
+            maxConnectionPoolSize: Number(process.env.NEO4J_POOL_SIZE ?? 50),
+            connectionTimeout: Number(process.env.NEO4J_CONN_TIMEOUT_MS ?? 30000),
+        });
     }
     return driver;
 }

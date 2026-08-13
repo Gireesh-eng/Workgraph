@@ -1,344 +1,380 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
-import StatCard from "../components/StatCard";
 import { getStats } from "../api/client";
 import type { StatsResponse } from "../types";
 
-const entryPoints = ["React", "Authentication", "Data Pipeline", "Alex Chen", "Platform Engineering"];
+const protocols = [
+  {
+    code: "Search",
+    title: "Graph Search",
+    desc: "Instantly locate people, projects, tasks, and technologies with our full-text search engine.",
+    features: ["Instant Results", "Auto-complete", "Global Indexing"],
+    link: "/search",
+  },
+  {
+    code: "Path",
+    title: "PathFinder",
+    desc: "Discover how any two entities are connected using our shortest-path graph traversal algorithm.",
+    features: ["BFS Traversal", "Shared Context", "Directional Flow"],
+    link: "/path",
+  },
+  {
+    code: "Explore",
+    title: "Relationship Map",
+    desc: "Visualize every connection radiating from a single entity in our interactive radial view.",
+    features: ["Interactive SVG", "Node Inspection", "360° Traversal"],
+    link: "/search",
+  },
+  {
+    code: "Inspect",
+    title: "Entity Profiles",
+    desc: "Access granular details, custom properties, and metadata for any node within your organization.",
+    features: ["Type Classification", "Dynamic Properties", "Shareable Links"],
+    link: "/search",
+  },
+];
 
-const entityTypes = [
-  { label: "People", color: "var(--person)" },
-  { label: "Teams", color: "var(--team)" },
-  { label: "Projects", color: "var(--project)" },
-  { label: "Tasks", color: "var(--task)" },
-  { label: "Technologies", color: "var(--technology)" },
-  { label: "Documents", color: "var(--document)" },
+const entityTypesMeta = [
+  { key: "people" as const, label: "People", color: "var(--person)", icon: "👤" },
+  { key: "teams" as const, label: "Teams", color: "var(--team)", icon: "👥" },
+  { key: "projects" as const, label: "Projects", color: "var(--project)", icon: "📁" },
+  { key: "tasks" as const, label: "Tasks", color: "var(--task)", icon: "✅" },
+  { key: "technologies" as const, label: "Technologies", color: "var(--technology)", icon: "⚙️" },
+  { key: "documents" as const, label: "Documents", color: "var(--document)", icon: "📄" },
+];
+
+const dbSpecs = [
+  { label: "Database Engine", value: "CognoDB / Neo4j", detail: "Graph-native storage" },
+  { label: "Query Language", value: "Cypher", detail: "Declarative pattern matching" },
+  { label: "Max Traversal Depth", value: "10 Hops", detail: "Variable-length paths" },
+  { label: "Connection Types", value: "8 Types", detail: "WORKS_ON, OWNS, USES…" },
 ];
 
 export default function Home() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
-  useEffect(() => { getStats().then(setStats).catch(() => undefined); }, []);
+  useEffect(() => {
+    getStats()
+      .then(setStats)
+      .catch(() => undefined);
+  }, []);
+
+  const totalNodes = stats
+    ? stats.people + stats.teams + stats.projects + stats.tasks + stats.technologies + stats.documents
+    : 0;
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        overflowY: "scroll",
-        scrollSnapType: "y proximity",
-        scrollBehavior: "smooth",
-        background: "#F7F5F2",
-      }}
-    >
-      {/* ══════════════════════════════════════════════════════
-          SECTION 1 — HERO
-      ══════════════════════════════════════════════════════ */}
-      <div
-        style={{
-          background: "linear-gradient(160deg, #1A1714 0%, #232018 55%, #1D1C1A 100%)",
-          scrollSnapAlign: "start",
-        }}
-      >
-        <AppHeader showSearch={false} transparent />
-        <section className="relative overflow-hidden" style={{ minHeight: "calc(100vh - 64px)" }}>
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -left-32 -top-20 h-[500px] w-[500px] rounded-full opacity-20" style={{ background: "radial-gradient(circle, var(--person) 0%, transparent 70%)", filter: "blur(80px)" }} />
-            <div className="absolute -right-20 top-10 h-[400px] w-[400px] rounded-full opacity-15" style={{ background: "radial-gradient(circle, var(--project) 0%, transparent 70%)", filter: "blur(80px)" }} />
-            <div className="absolute bottom-0 left-[40%] h-[300px] w-[300px] rounded-full opacity-10" style={{ background: "radial-gradient(circle, var(--technology) 0%, transparent 70%)", filter: "blur(60px)" }} />
+    <div style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+      {/* ═══════════════════════════════════════════════════
+          SECTION 1 — HERO (Full viewport, dark, brutalist)
+      ═══════════════════════════════════════════════════ */}
+      <section className="relative min-h-screen bg-[#0A0A0A] text-white flex flex-col justify-between p-6 overflow-hidden">
+        {/* Grid overlay */}
+        <div className="absolute inset-0 grid-bg-brutal-dark opacity-40 pointer-events-none" />
+
+        {/* Header bar */}
+        <header className="relative z-10 flex justify-between items-start border-b border-white/15 pb-4">
+          <div>
+            <h1 className="font-display font-bold text-4xl tracking-tighter">
+              Work<span style={{ color: "var(--person)" }}>Graph</span>
+            </h1>
+            <span className="text-xs mt-1 opacity-50 uppercase tracking-widest">
+              Organization Explorer
+            </span>
           </div>
-          <div className="relative mx-auto flex min-h-[calc(100vh-64px)] max-w-[1280px] items-center px-6 py-16 lg:px-10">
-            <div className="grid w-full items-center gap-12 lg:grid-cols-[minmax(0,1fr)_480px]">
-              <div className="flex flex-col justify-center">
-                <div className="mb-5 inline-flex self-start items-center gap-2 rounded-full border px-3.5 py-1.5" style={{ borderColor: "rgba(181,82,46,.35)", background: "rgba(181,82,46,.1)" }}>
-                  <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "var(--person)" }} />
-                  <span className="font-mono text-[11px] font-semibold uppercase tracking-[.1em]" style={{ color: "var(--person)" }}>Your organization, connected</span>
-                </div>
-                <h1 className="text-[42px] font-bold leading-[1.1] tracking-[-.04em] text-white sm:text-[56px] lg:text-[64px]">
-                  Find the people<br />
-                  <span className="text-transparent" style={{ WebkitTextStroke: "1.5px rgba(255,255,255,.25)" }}>and work behind</span><br />
-                  <span style={{ background: "linear-gradient(90deg, var(--person), var(--team))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>every decision.</span>
-                </h1>
-                <p className="mt-6 max-w-[560px] text-[17px] leading-7" style={{ color: "rgba(255,255,255,.6)" }}>
-                  WorkGraph turns your organization into an explorable map of people, projects, tasks, technology, and documents.
+          <div className="text-right text-xs leading-tight opacity-50 uppercase">
+            <div>SYS.STATUS: ONLINE</div>
+            <div>GRAPH DATABASE</div>
+            <div>
+              NODES: {stats ? totalNodes : "—"}
+            </div>
+          </div>
+        </header>
+
+        {/* Main hero content */}
+        <div className="flex-1 flex items-center relative z-10">
+          <div className="w-full flex flex-col md:flex-row md:items-start md:justify-between gap-12 pt-12 md:pt-0">
+            <div>
+              <div className="font-display text-huge font-black uppercase mix-blend-difference opacity-90 leading-none mt-2">
+                Work
+                <br />
+                Graph
+              </div>
+              <div className="mt-8 max-w-lg border-l-2 border-white/40 pl-6 ml-2">
+                <p className="text-sm uppercase leading-relaxed opacity-60">
+                  Map your entire organization. Explore relationships between people, projects, tasks,
+                  technology, and documents — all from one searchable graph.
                 </p>
-                <div className="mt-8 max-w-[560px]">
-                  <SearchBar autoFocus dark />
-                </div>
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <Link to="/path" className="inline-flex h-11 items-center gap-2 rounded-control px-5 text-[14px] font-semibold text-white transition-all duration-120 hover:opacity-90 active:scale-[.98]" style={{ background: "linear-gradient(135deg, var(--person), var(--team))" }}>
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><circle cx="5" cy="12" r="2.5" /><circle cx="19" cy="6" r="2.5" /><circle cx="19" cy="18" r="2.5" /><path d="M7.5 12h5a1 1 0 001-1V8M13.5 15v-.5a1 1 0 011-1h0" strokeLinecap="round" /></svg>
-                    Find a path
-                  </Link>
-                  <span className="text-[13px]" style={{ color: "rgba(255,255,255,.45)" }}>Trace how any two entities are connected.</span>
-                </div>
-                <div className="mt-8 flex flex-wrap gap-2">
-                  {entityTypes.map(({ label, color }) => (
-                    <span key={label} className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-medium" style={{ background: "rgba(255,255,255,.07)", color: "rgba(255,255,255,.65)", border: "1px solid rgba(255,255,255,.1)" }}>
-                      <span className="h-1.5 w-1.5 rounded-full" style={{ background: color }} />{label}
-                    </span>
-                  ))}
+              </div>
+            </div>
+            <div className="w-full max-w-[540px] shrink-0 mb-8 md:mb-0">
+              <div className="text-[10px] font-mono tracking-widest uppercase text-white/50 mb-3 ml-1">
+                [ INITIATE ENTITY SEARCH ]
+              </div>
+              <SearchBar autoFocus dark />
+            </div>
+          </div>
+        </div>
+
+        {/* Footer bar */}
+        <footer className="relative z-10 flex justify-between items-end pt-4 border-t border-white/15">
+          <div className="text-xs opacity-30 uppercase">
+            WorkGraph —
+            <br />
+            Navigate Your Company
+          </div>
+          <Link
+            to="/search"
+            className="group flex items-center gap-4"
+          >
+            <div className="text-right">
+              <div className="text-xs uppercase tracking-widest mb-1 opacity-50 group-hover:opacity-100 transition-opacity">
+                Initialize Search
+              </div>
+              <div className="font-display font-bold text-xl uppercase">
+                Enter System →
+              </div>
+            </div>
+          </Link>
+        </footer>
+      </section>
+
+      <div className="relative bg-white text-black border-t border-gray-300">
+        <div className="absolute inset-0 grid-bg-brutal pointer-events-none" />
+
+        {/* ═══════════════════════════════════════════════════
+          SECTION 2 — DATABASE OVERVIEW (Stats Dashboard)
+      ═══════════════════════════════════════════════════ */}
+        <section className="relative z-10">
+          <div className="relative z-10 max-w-[1280px] mx-auto p-6 lg:p-12">
+            {/* Section header */}
+            <header className="mb-10">
+              <div className="flex items-baseline gap-4 mb-2">
+                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-400">[ SECTION 02 ]</span>
+                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-400">DATABASE OVERVIEW</span>
+              </div>
+              <h2 className="font-display text-5xl lg:text-6xl font-medium uppercase leading-tight">
+                Live
+                <span className="font-light italic text-gray-500 ml-4">Statistics</span>
+              </h2>
+            </header>
+
+            {/* Main stats row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-300 border border-gray-300 mb-8">
+              {/* Nodes */}
+              <div className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[140px]">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Total Nodes</span>
+                <div className="mt-4">
+                  <span className="font-display text-5xl lg:text-6xl font-black text-black">{stats ? totalNodes : "—"}</span>
                 </div>
               </div>
-
-              <div className="relative z-10 overflow-hidden rounded-2xl p-px" style={{ background: "linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.04))" }}>
-                <div className="flex h-full flex-col rounded-2xl p-8" style={{ background: "rgba(255,255,255,.045)", backdropFilter: "blur(20px)" }}>
-                  <p className="font-mono text-[11px] font-semibold uppercase tracking-[.1em]" style={{ color: "var(--person)" }}>Designed for context</p>
-                  <h2 className="mt-3 text-[24px] font-bold leading-[32px] tracking-[-.025em] text-white">One place to move from a question to an answer.</h2>
-                  <div className="mt-8 space-y-5 flex-1">
-                    {[
-                      { title: "Search what you know", desc: "Start with a person, project, task, or technology.", color: "var(--person)" },
-                      { title: "See what connects", desc: "Inspect direct relationships in a clear visual map.", color: "var(--project)" },
-                      { title: "Trace the full path", desc: "Reveal the shortest connection across your graph.", color: "var(--technology)" },
-                    ].map(({ title, desc, color }) => (
-                      <div key={title} className="flex gap-4">
-                        <div className="mt-1 h-6 w-[3px] shrink-0 rounded-full" style={{ background: color }} />
-                        <div>
-                          <p className="text-[15px] font-semibold text-white">{title}</p>
-                          <p className="mt-1 text-[14px] leading-6" style={{ color: "rgba(255,255,255,.5)" }}>{desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-8 rounded-xl p-5" style={{ background: "rgba(0,0,0,.2)" }}>
-                    <svg viewBox="0 0 280 90" className="w-full" fill="none">
-                      <circle cx="140" cy="48" r="16" stroke="var(--person)" strokeWidth="1.5" fill="rgba(181,82,46,.15)" />
-                      <text x="140" y="52" textAnchor="middle" fill="rgba(255,255,255,.8)" fontSize="8" fontFamily="IBM Plex Mono" fontWeight="500">TEAM</text>
-                      {[{ x: 50, y: 25, c: "var(--person)", l: "Person" }, { x: 40, y: 73, c: "var(--project)", l: "Project" }, { x: 230, y: 25, c: "var(--technology)", l: "Tech" }, { x: 236, y: 70, c: "var(--document)", l: "Doc" }, { x: 140, y: 14, c: "var(--task)", l: "Task" }].map(({ x, y, c, l }) => (
-                        <g key={l}>
-                          <line x1={x} y1={y} x2="140" y2="48" stroke="rgba(255,255,255,.12)" strokeWidth="1" strokeDasharray="3 3" />
-                          <circle cx={x} cy={y} r="10" fill={`${c}30`} stroke={c} strokeWidth="1.2" />
-                          <text x={x} y={y + 3} textAnchor="middle" fill="rgba(255,255,255,.6)" fontSize="6" fontFamily="IBM Plex Mono">{l.slice(0, 4)}</text>
-                        </g>
-                      ))}
-                    </svg>
-                  </div>
+              {/* Relationships */}
+              <div className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[140px]">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Relationships</span>
+                <div className="mt-4">
+                  <span className="font-display text-5xl lg:text-6xl font-black text-black">{stats ? stats.relationships : "—"}</span>
                 </div>
+              </div>
+              {/* Entity Types */}
+              <div className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[140px]">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Entity Types</span>
+                <div className="mt-4">
+                  <span className="font-display text-5xl lg:text-6xl font-black text-black">6</span>
+                </div>
+              </div>
+              {/* Avg connections */}
+              <div className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[140px]">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Avg Connections</span>
+                <div className="mt-4">
+                  <span className="font-display text-5xl lg:text-6xl font-black text-black">
+                    {stats && totalNodes > 0 ? ((stats.relationships * 2) / totalNodes).toFixed(1) : "—"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Per-type breakdown */}
+            <div className="border border-gray-300">
+              <div className="px-6 py-4 border-b border-gray-300 flex items-center justify-between bg-white text-black">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">Entity Breakdown</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">[ BY TYPE ]</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-gray-300">
+                {entityTypesMeta.map((et) => {
+                  const count = stats ? stats[et.key] : 0;
+                  const pct = stats && totalNodes > 0 ? Math.round((count / totalNodes) * 100) : 0;
+                  return (
+                    <div key={et.key} className="bg-white p-5 flex flex-col gap-3 group hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 border border-gray-200" style={{ backgroundColor: et.color }} />
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">{et.label}</span>
+                      </div>
+                      <span className="font-display text-3xl font-bold text-black">{stats ? count : "—"}</span>
+                      {/* Mini bar */}
+                      <div className="w-full h-1 bg-gray-200 mt-auto">
+                        <div
+                          className="h-full transition-all duration-700"
+                          style={{ width: `${pct}%`, backgroundColor: et.color }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         </section>
-      </div>
 
-      {/* ══════════════════════════════════════════════════════
-          SECTION 2 — GRAPH AT A GLANCE
-          Layout: big pull-quote left  |  stats grid right
-          + full-width quick-start row below
-      ══════════════════════════════════════════════════════ */}
-      <section
-        style={{
-          background: "#F7F5F2",
-          minHeight: "100vh",
-          scrollSnapAlign: "start",
-          display: "flex",
-          alignItems: "center",
-          borderTop: "1px solid rgba(55,43,33,.07)",
-        }}
-      >
-        <div className="mx-auto w-full max-w-[1280px] px-6 py-20 lg:px-10">
-
-          {/* Top: eyebrow + giant statement left / stat grid right */}
-          <div className="grid gap-12 lg:grid-cols-[1fr_420px] lg:gap-20 items-start">
-
-            {/* Left — editorial copy block */}
-            <div>
-              <p className="eyebrow mb-4" style={{ color: "var(--person)" }}>Graph overview</p>
-              <p
-                className="font-bold leading-[1.05] tracking-[-.04em]"
-                style={{ fontSize: "clamp(40px, 5.5vw, 68px)", color: "#1A1714" }}
-              >
-                Every person.<br />
-                Every project.<br />
-                <span style={{ color: "rgba(55,43,33,.22)" }}>One graph.</span>
-              </p>
-              <div className="mt-8 flex items-center gap-4" style={{ borderTop: "1px solid rgba(55,43,33,.1)", paddingTop: "1.5rem" }}>
-                <Link to="/path" className="inline-flex h-10 items-center gap-2 rounded-control px-5 text-[13px] font-semibold text-white transition-all duration-120 hover:opacity-90" style={{ background: "linear-gradient(135deg, var(--person), var(--team))" }}>
-                  Explore paths →
-                </Link>
-                <Link to="/search" className="text-[13px] font-semibold" style={{ color: "rgba(55,43,33,.5)" }}>
-                  or search the graph
-                </Link>
+        {/* ═══════════════════════════════════════════════════
+          SECTION 3 — GRAPH DATABASE HIGHLIGHTS
+      ═══════════════════════════════════════════════════ */}
+        <section className="relative z-10 border-t border-gray-600">
+          <div className="relative z-10 max-w-[1280px] mx-auto p-6 lg:p-12">
+            <header className="mb-10">
+              <div className="flex items-baseline gap-4 mb-2">
+                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-400">[ SECTION 03 ]</span>
+                <span className="font-mono text-[10px] tracking-widest uppercase text-gray-400">SPECIFICATIONS</span>
               </div>
-            </div>
+              <h2 className="font-display text-5xl lg:text-6xl font-medium uppercase leading-tight">
+                Graph Database
+                <br />
+                <span className="font-light italic text-gray-400">Highlights</span>
+              </h2>
+            </header>
 
-            {/* Right — stat cards */}
-            <div className="grid grid-cols-2 gap-4">
-              <StatCard label="People" value={stats?.people ?? null} delay={0} />
-              <StatCard label="Projects" value={stats?.projects ?? null} delay={40} />
-              <StatCard label="Tasks" value={stats?.tasks ?? null} delay={80} />
-              <StatCard label="Technologies" value={stats?.technologies ?? null} delay={120} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-gray-300 border border-gray-300">
+              {dbSpecs.map((spec) => (
+                <div key={spec.label} className="bg-white p-6 lg:p-8 flex flex-col justify-between min-h-[180px]">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">{spec.label}</span>
+                  <div className="mt-4">
+                    <div className="font-display text-2xl font-bold uppercase text-black">{spec.value}</div>
+                    <p className="mt-2 font-mono text-[11px] text-gray-500 uppercase">{spec.detail}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+        </section>
 
-          {/* Bottom — quick-start entry points */}
-          <div className="mt-12" style={{ borderTop: "1px solid rgba(55,43,33,.08)", paddingTop: "2rem" }}>
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-              <p className="eyebrow" style={{ color: "rgba(55,43,33,.45)" }}>Jump back in</p>
-              <span className="text-[13px]" style={{ color: "rgba(55,43,33,.4)" }}>Start exploring →</span>
+        {/* ═══════════════════════════════════════════════════
+          SECTION 4 — PROTOCOLS (Feature cards)
+      ═══════════════════════════════════════════════════ */}
+        <section className="relative z-10 border-t border-gray-600">
+          <div className="relative z-10 max-w-[1280px] mx-auto p-6 lg:p-12">
+            {/* Section header */}
+            <header className="mb-16 relative">
+              <div className="absolute -left-4 top-0 w-px h-full bg-gray-600 hidden lg:block" />
+              <h2 className="font-display text-6xl lg:text-7xl font-medium uppercase leading-tight mb-8">
+                Architecting
+                <br />
+                <span className="font-light italic text-gray-400">Your Work Map</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <p className="text-sm uppercase leading-relaxed text-gray-600">
+                  WorkGraph operates at the intersection of data and relationships. We don't just
+                  store entities; we connect them. From team structures to technology stacks, WorkGraph
+                  provides the toolkit for organizational intelligence.
+                </p>
+
+              </div>
+            </header>
+
+            {/* Protocol cards label */}
+            <div className="flex items-baseline justify-between border-b border-gray-600 pb-4 mb-8">
+              <h3 className="font-display text-3xl uppercase">Core Capabilities</h3>
+              <span className="text-xs opacity-50">[ EXPLORE GRAPH ]</span>
             </div>
-            <div className="flex flex-wrap gap-2.5">
-              {entryPoints.map((term) => (
+
+            {/* 2×2 card grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-300 border border-gray-300">
+              {protocols.map((p) => (
                 <Link
-                  key={term}
-                  to={`/search?q=${encodeURIComponent(term)}`}
-                  className="rounded-control border bg-white px-4 py-2.5 text-[14px] font-semibold text-ink-900 transition-all duration-150 hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(55,43,33,.1)]"
-                  style={{ borderColor: "rgba(55,43,33,.12)" }}
+                  key={p.code}
+                  to={p.link}
+                  className="bg-white p-8 hover:bg-black hover:text-white transition-colors group flex flex-col justify-between min-h-[260px]"
                 >
-                  {term} <span className="ml-1" style={{ color: "var(--person)" }}>→</span>
+                  <div>
+                    <div className="flex justify-end mb-8">
+                      <svg
+                        className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="square"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        />
+                      </svg>
+                    </div>
+                    <h4 className="font-display text-2xl uppercase mb-4 font-bold">{p.title}</h4>
+                    <p className="text-sm text-gray-500 group-hover:text-gray-300 mb-6 transition-colors">
+                      {p.desc}
+                    </p>
+                  </div>
+                  <ul className="text-xs space-y-2 border-t border-gray-200 group-hover:border-white/20 pt-4 transition-colors">
+                    {p.features.map((f) => (
+                      <li key={f} className="flex items-center">
+                        <span className="w-1 h-1 bg-current mr-2" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
                 </Link>
               ))}
             </div>
           </div>
+        </section>
 
-        </div>
-      </section>
+      </div>
 
-      {/* ══════════════════════════════════════════════════════
-          SECTION 3 — HOW IT WORKS
-          Layout: large step number + copy left  |  card right
-          Three rows, one per step — editorial magazine style
-      ══════════════════════════════════════════════════════ */}
-      <section
-        style={{
-          background: "#EFECE8",
-          minHeight: "100vh",
-          scrollSnapAlign: "start",
-          display: "flex",
-          alignItems: "center",
-          borderTop: "1px solid rgba(55,43,33,.07)",
-        }}
-      >
-        <div className="mx-auto w-full max-w-[1280px] px-6 py-20 lg:px-10">
-
-          {/* Section header */}
-          <div className="mb-14 flex items-end justify-between" style={{ borderBottom: "1px solid rgba(55,43,33,.09)", paddingBottom: "2rem" }}>
-            <div>
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[.12em]" style={{ color: "var(--person)" }}>How it works</p>
-              <h2
-                className="mt-2 font-bold leading-[1.1] tracking-[-.04em]"
-                style={{ fontSize: "clamp(32px, 5vw, 56px)", color: "#1A1714" }}
-              >
-                Three steps.<br />
-                <span style={{ color: "rgba(55,43,33,.22)" }}>Any answer.</span>
-              </h2>
-            </div>
-            <Link to="/search" className="hidden text-[13px] font-semibold sm:block" style={{ color: "var(--person)" }}>
-              Try it now →
-            </Link>
-          </div>
-
-          {/* Three editorial rows */}
-          <div className="space-y-0">
-            {[
-              {
-                num: "01",
-                title: "Search anything.",
-                sub: "Name, project, tech, keyword.",
-                desc: "Instantly surfaces people, projects, tasks, and technologies. Start anywhere.",
-                color: "var(--person)",
-                aside: "Every entity type, indexed.",
-              },
-              {
-                num: "02",
-                title: "See what connects.",
-                sub: "Relationships, visualised.",
-                desc: "Every node shows its direct neighbours — ownership, tech stacks, task dependencies.",
-                color: "var(--project)",
-                aside: "Visual graph explorer.",
-              },
-              {
-                num: "03",
-                title: "Trace the full path.",
-                sub: "Any two things, connected.",
-                desc: "PathFinder finds the shortest chain between any two entities across your entire org.",
-                color: "var(--technology)",
-                aside: "Shortest-path, real-time.",
-              },
-            ].map(({ num, title, sub, desc, color, aside }, i) => (
-              <div
-                key={num}
-                className="grid gap-6 py-10 lg:grid-cols-[100px_1fr_220px] lg:gap-12 lg:items-center"
-                style={{ borderBottom: i < 2 ? "1px solid rgba(55,43,33,.08)" : "none" }}
-              >
-                <p
-                  className="font-bold leading-none tracking-tighter"
-                  style={{ fontSize: "clamp(48px, 6vw, 72px)", color: `${color}28`, fontVariantNumeric: "tabular-nums" }}
-                >
-                  {num}
-                </p>
-                <div>
-                  <p className="font-mono text-[11px] font-semibold uppercase tracking-[.1em] mb-2" style={{ color }}>
-                    {sub}
-                  </p>
-                  <h3
-                    className="font-bold leading-[1.15] tracking-[-.03em]"
-                    style={{ fontSize: "clamp(22px, 3vw, 32px)", color: "#1A1714" }}
-                  >
-                    {title}
-                  </h3>
-                  <p className="mt-3 max-w-[440px] text-[15px] leading-7" style={{ color: "rgba(55,43,33,.55)" }}>
-                    {desc}
-                  </p>
-                </div>
-                <div
-                  className="rounded-xl p-4"
-                  style={{ background: "rgba(55,43,33,.05)", border: "1px solid rgba(55,43,33,.08)" }}
-                >
-                  <div className="h-1.5 w-8 rounded-full mb-3" style={{ background: color }} />
-                  <p className="text-[13px] font-medium leading-6" style={{ color: "rgba(55,43,33,.45)" }}>
-                    {aside}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════
-          FOOTER — Typographic
-      ══════════════════════════════════════════════════════ */}
-      <footer style={{ background: "#1A1714", overflow: "hidden", scrollSnapAlign: "start", borderTop: "1px solid rgba(255,255,255,.06)" }}>
-        <div className="relative select-none" style={{ borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-          <p
-            className="whitespace-nowrap font-bold leading-none text-white"
-            style={{
-              fontSize: "clamp(72px, 18vw, 220px)",
-              letterSpacing: "-0.04em",
-              padding: "0.45em 0.2em 0.4em",
-              opacity: 0.06,
-              userSelect: "none",
-            }}
-          >
-            WorkGraph
-          </p>
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center">
-            <p className="font-bold leading-tight text-white" style={{ fontSize: "clamp(22px, 4vw, 42px)", letterSpacing: "-0.03em" }}>
-              Your organisation,<br />
-              <span style={{ color: "rgba(255,255,255,.35)" }}>mapped and searchable.</span>
+      {/* ═══════════════════════════════════════════════════
+          FOOTER — Brutalist minimal
+      ═══════════════════════════════════════════════════ */}
+      <footer className="bg-[#0A0A0A] text-white border-t border-white/10 border-t-8 border-t-black mt-auto">
+        <div className="max-w-[1280px] mx-auto px-6 py-12 lg:px-12 lg:py-20 grid grid-cols-1 md:grid-cols-4 gap-12 text-xs uppercase">
+          <div className="col-span-2">
+            <h5 className="font-bold mb-4 font-display text-xl tracking-tighter">
+              Work<span style={{ color: "var(--person)" }}>Graph</span>
+            </h5>
+            <p className="max-w-xs text-white/50 leading-relaxed mt-4">
+              Organization Explorer
+              <br />
+              Graph-powered relationship mapping
+              <br />
+              for modern teams.
             </p>
-            <div className="mt-2 flex flex-wrap justify-center gap-2">
-              <Link to="/search" className="inline-flex h-10 items-center gap-1.5 rounded-control px-5 text-[13px] font-semibold text-white transition-opacity duration-120 hover:opacity-80" style={{ background: "linear-gradient(135deg, var(--person), var(--team))" }}>
-                Start searching →
-              </Link>
-              <Link to="/path" className="inline-flex h-10 items-center gap-1.5 rounded-control border px-5 text-[13px] font-semibold text-white transition-opacity duration-120 hover:opacity-70" style={{ borderColor: "rgba(255,255,255,.18)" }}>
-                Try PathFinder
-              </Link>
-            </div>
+          </div>
+          <div>
+            <h5 className="font-bold mb-4">Navigate</h5>
+            <ul className="space-y-2 text-white/50">
+              <li>
+                <Link to="/search" className="hover:text-white transition-colors">
+                  Search
+                </Link>
+              </li>
+              <li>
+                <Link to="/path" className="hover:text-white transition-colors">
+                  PathFinder
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h5 className="font-bold mb-4">System</h5>
+            <ul className="space-y-2 text-white/50">
+              <li>Status: Online</li>
+              <li>Database: Neo4j</li>
+              <li>
+                v.1.0.0
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-4 px-6 py-5 lg:px-10">
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-[.08em]" style={{ color: "rgba(255,255,255,.25)" }}>
-            WorkGraph © {new Date().getFullYear()}
-          </span>
-          <div className="flex items-center gap-6">
-            {[{ label: "Search", to: "/search" }, { label: "PathFinder", to: "/path" }, { label: "Graph", to: "/" }].map(({ label, to }) => (
-              <Link key={label} to={to} className="text-[12px] font-medium transition-opacity duration-120 hover:opacity-70" style={{ color: "rgba(255,255,255,.3)" }}>
-                {label}
-              </Link>
-            ))}
-          </div>
+        <div className="border-t border-white/10 py-4 px-6 lg:px-12 text-center text-xs text-white/40 uppercase tracking-widest">
+          WorkGraph — Modern Database Navigation
         </div>
       </footer>
     </div>

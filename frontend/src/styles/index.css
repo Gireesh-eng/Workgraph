@@ -9,7 +9,7 @@
 @tailwind utilities;
 
 html {
-    background: #F7F5F2;
+    background: #f4f4f4;
 }
 
 #root {
@@ -18,7 +18,11 @@ html {
 }
 
 body {
-    @apply m-0 bg-paper font-sans text-[16px] leading-6 text-ink-900 antialiased;
+    @apply m-0 font-sans text-[16px] leading-6 text-black antialiased;
+    background-color: transparent;
+    background-image: linear-gradient(to right, #e5e5e5 1px, transparent 1px),
+        linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
+    background-size: 40px 40px;
 }
 
 button,
@@ -48,12 +52,14 @@ select:focus-visible {
 }
 
 .entity-badge {
-    @apply inline-flex items-center rounded-pill px-2.5 py-[3px] font-mono text-[11px] font-medium uppercase leading-4 tracking-[.03em];
+    @apply inline-flex items-center px-1.5 py-0.5 font-mono text-[10px] uppercase font-bold text-black border border-black;
+    border-radius: 0;
 }
 
 .card {
-    @apply relative overflow-hidden rounded border border-border bg-surface;
-    box-shadow: 0 1px 1px rgba(55, 43, 33, .02), 0 8px 20px rgba(55, 43, 33, .035);
+    @apply relative overflow-hidden bg-white border border-black;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 :root {
@@ -75,14 +81,78 @@ select:focus-visible {
 }
 
 .icon-button {
-    @apply inline-flex h-10 items-center justify-center rounded-control border border-border bg-surface px-3 text-[13px] font-semibold text-ink-900 transition-all duration-120 hover:-translate-y-px hover:border-border-strong hover:bg-surface-sunken active:translate-y-0;
+    @apply inline-flex h-9 items-center justify-center border border-black bg-white px-3 text-[12px] font-mono uppercase text-black hover:bg-black hover:text-white transition-colors cursor-pointer;
+    border-radius: 0;
 }
 
 .field-control {
-    @apply h-12 w-full rounded-control border border-border bg-surface px-4 text-[15px] font-medium text-ink-900 shadow-sm transition-all duration-120 hover:border-border-strong focus:border-ink-900 focus:ring-[3px] focus:ring-ink-900/10;
+    @apply h-11 w-full border border-black bg-white px-3 text-[14px] font-mono text-black placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-black;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .surface-section {
-    @apply rounded-2xl border border-border bg-surface;
-    box-shadow: 0 12px 30px rgba(55, 43, 33, .035);
+    @apply bg-white border border-black;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* ─── Brutalist Home Page ─── */
+
+.font-display {
+    font-family: 'Archivo', sans-serif;
+}
+
+.grid-bg-brutal {
+    background-image: linear-gradient(to right, #e5e5e5 1px, transparent 1px),
+        linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+.grid-bg-brutal-dark {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, .06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, .06) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+.text-huge {
+    font-size: 12rem;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+}
+
+@media (max-width: 1024px) {
+    .text-huge {
+        font-size: 7rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .text-huge {
+        font-size: 4.5rem;
+    }
+}
+
+.hover-invert {
+    transition: all 0.2s;
+}
+
+.hover-invert:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.marquee-animate {
+    display: inline-block;
+    animation: marquee-scroll 25s linear infinite;
 }
