@@ -80,7 +80,7 @@ export default function PathFinder() {
             <section className="bg-white border border-black overflow-visible relative">
               <div className="border-b-4 border-black bg-white px-6 py-7 sm:px-8">
                 <p className="font-mono text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2">[ RELATIONSHIP EXPLORER ]</p>
-                <h1 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-tighter text-black leading-none">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold uppercase tracking-tighter text-black leading-none break-words">
                   Find The Shortest Path
                 </h1>
                 <p className="mt-4 max-w-[670px] font-mono text-sm uppercase leading-relaxed text-black/70 border-l-2 border-black pl-4">
@@ -250,7 +250,7 @@ function PathResults({ path }: { path: PathHop[] }) {
               )}
               <Link
                 to={`/entity/${hop.node.type}/${hop.node.id}`}
-                className="bg-white border border-black hover:bg-black hover:text-white transition-colors group flex min-h-[96px] items-center gap-4 px-6 py-5 relative overflow-hidden"
+                className="bg-white border border-black hover:bg-black hover:text-white transition-colors group flex min-h-[84px] sm:min-h-[96px] items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 relative overflow-hidden"
               >
                 <span
                   className="absolute inset-y-0 left-0 w-[4px]"
@@ -258,18 +258,18 @@ function PathResults({ path }: { path: PathHop[] }) {
                     backgroundColor: `var(--${nodeTypeColors[hop.node.type]})`,
                   }}
                 />
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-current bg-transparent font-mono text-[14px] font-bold text-current">
+                <span className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center border border-current bg-transparent font-mono text-[13px] sm:text-[14px] font-bold text-current">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <div className="min-w-0 flex-1 ml-2">
-                  <p className="truncate font-display font-medium text-xl uppercase">
+                <div className="min-w-0 flex-1 ml-1 sm:ml-2">
+                  <p className="truncate font-display font-medium text-lg sm:text-xl uppercase">
                     {hop.node.name}
                   </p>
-                  <p className="mt-1 font-mono text-[12px] opacity-60 uppercase">
+                  <p className="mt-1 font-mono text-[11px] sm:text-[12px] opacity-60 uppercase">
                     ID: {hop.node.id}
                   </p>
                 </div>
-                <div className="ml-4 flex shrink-0 items-center justify-end min-w-[120px]">
+                <div className="ml-2 hidden sm:flex shrink-0 items-center justify-end sm:min-w-[32px]">
                   <svg
                     className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity rotate-[-45deg]"
                     fill="none"

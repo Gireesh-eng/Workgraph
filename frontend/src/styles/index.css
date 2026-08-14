@@ -129,7 +129,19 @@ select:focus-visible {
 
 @media (max-width: 640px) {
     .text-huge {
-        font-size: 4.5rem;
+        font-size: 4.25rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .text-huge {
+        font-size: 3.25rem;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .text-huge {
+        font-size: 3.5rem;
     }
 }
 

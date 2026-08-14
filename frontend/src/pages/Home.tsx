@@ -147,16 +147,16 @@ export default function Home() {
         <div className="absolute inset-0 grid-bg-brutal-dark opacity-40 pointer-events-none" />
 
         {/* Header bar */}
-        <header className="relative z-10 flex justify-between items-start border-b border-white/15 pb-4">
+        <header className="relative z-10 flex justify-between items-start border-b border-white/15 pb-4 gap-4">
           <div>
-            <h1 className="font-display font-bold text-4xl tracking-tighter">
+            <h1 className="font-display font-bold text-2xl sm:text-4xl tracking-tighter">
               Work<span style={{ color: "var(--person)" }}>Graph</span>
             </h1>
-            <span className="text-xs mt-1 opacity-50 uppercase tracking-widest">
+            <span className="text-[10px] sm:text-xs mt-1 opacity-50 uppercase tracking-widest block">
               Organization Explorer
             </span>
           </div>
-          <div className="text-right text-xs leading-tight opacity-50 uppercase">
+          <div className="text-right text-[10px] sm:text-xs leading-tight opacity-50 uppercase shrink-0">
             <div>SYS.STATUS: ONLINE</div>
             <div>GRAPH DATABASE</div>
             <div>
@@ -234,9 +234,9 @@ export default function Home() {
                   DATABASE OVERVIEW
                 </span>
               </div>
-              <h2 className="font-display text-5xl lg:text-6xl font-medium uppercase leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-6xl font-medium uppercase leading-tight">
                 Live
-                <span className="font-light italic text-gray-600 ml-4">
+                <span className="font-light italic text-gray-600 ml-2 sm:ml-4">
                   Statistics
                 </span>
               </h2>
@@ -386,7 +386,7 @@ export default function Home() {
                   SPECIFICATIONS
                 </span>
               </div>
-              <h2 className="font-display text-5xl lg:text-6xl font-medium uppercase leading-tight text-gray-900">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-6xl font-medium uppercase leading-tight text-gray-900">
                 Graph Database
                 <br />
                 <span className="font-light italic text-gray-500">
@@ -426,7 +426,7 @@ export default function Home() {
             {/* Section header */}
             <header className="mb-16 relative">
               <div className="absolute -left-4 top-0 w-px h-full bg-gray-600 hidden lg:block" />
-              <h2 className="font-display text-6xl lg:text-7xl font-medium uppercase leading-tight mb-8">
+              <h2 className="font-display text-3xl sm:text-5xl lg:text-7xl font-medium uppercase leading-tight mb-8 break-words">
                 Architecting
                 <br />
                 <span className="font-light italic text-gray-400">
@@ -444,11 +444,11 @@ export default function Home() {
             </header>
 
             {/* Protocol cards label */}
-            <div className="flex items-end justify-between border-b border-gray-600 pb-4 mb-[40px] h-[80px]">
-              <h3 className="font-display text-3xl uppercase">
+            <div className="flex items-end justify-between border-b border-gray-600 pb-4 mb-6 sm:mb-[40px] min-h-[60px]">
+              <h3 className="font-display text-xl sm:text-3xl uppercase">
                 Core Capabilities
               </h3>
-              <span className="text-xs opacity-50">[ EXPLORE GRAPH ]</span>
+              <span className="text-[10px] sm:text-xs opacity-50 shrink-0">[ EXPLORE GRAPH ]</span>
             </div>
 
             {/* 2×2 card grid */}

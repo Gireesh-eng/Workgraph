@@ -62,7 +62,7 @@ export default function Search() {
         <main className="mx-auto max-w-[1280px] px-6 py-10 lg:px-10">
           <div className="border-b border-black pb-8 mb-8">
             <p className="font-mono text-xs uppercase tracking-widest text-black/50 mb-2">[ GRAPH SEARCH ]</p>
-            <h1 className="font-display text-5xl md:text-7xl font-bold uppercase tracking-tighter leading-none text-black">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold uppercase tracking-tighter leading-none text-black">
               Search
               <br />
               Directory
@@ -139,7 +139,7 @@ export default function Search() {
                         <Link
                           key={item.id}
                           to={`/entity/${item.type}/${item.id}`}
-                          className="bg-white hover:bg-black hover:text-white transition-colors group flex min-h-[96px] items-center px-6 py-5 motion-safe:animate-fade-up relative overflow-hidden"
+                          className="bg-white hover:bg-black hover:text-white transition-colors group flex min-h-[84px] sm:min-h-[96px] items-center px-4 sm:px-6 py-4 sm:py-5 motion-safe:animate-fade-up relative overflow-hidden"
                           style={{ animationDelay: `${index * 30}ms` }}
                         >
                           <span
@@ -149,16 +149,16 @@ export default function Search() {
                             }}
                           />
                           <div className="min-w-0 flex-1 ml-2">
-                            <p className="truncate font-display font-medium text-xl uppercase">
+                            <p className="font-display font-medium text-lg sm:text-xl uppercase truncate">
                               {item.name}
                             </p>
                             {item.context && (
-                              <p className="mt-2 truncate font-mono text-xs opacity-60 uppercase">
+                              <p className="mt-1.5 truncate font-mono text-xs opacity-60 uppercase">
                                 {item.context}
                               </p>
                             )}
                           </div>
-                          <div className="ml-4 flex shrink-0 items-center justify-end min-w-[120px]">
+                          <div className="ml-2 hidden sm:flex shrink-0 items-center justify-end sm:min-w-[32px]">
                             <svg
                               className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity rotate-[-45deg]"
                               fill="none"

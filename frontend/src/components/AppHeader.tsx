@@ -26,12 +26,11 @@ export default function AppHeader({ query = "", showSearch = true, transparent =
         )}
 
         {/* Nav */}
-        <nav className="ml-auto flex items-center gap-6 font-mono text-xs uppercase tracking-widest">
-          {showSearch && (
-            <div className="hidden sm:flex gap-6">
-              <Link to="/path" className={`text-white/70 hover:text-white transition-colors`}>PathFinder</Link>
-            </div>
-          )}
+        <nav className="ml-auto flex items-center gap-3 sm:gap-6 font-mono text-xs uppercase tracking-widest">
+          <Link to="/path" className="text-white/70 hover:text-white transition-colors">
+            <span className="hidden sm:inline">PathFinder</span>
+            <span className="sm:hidden text-[11px]">[ PATH ]</span>
+          </Link>
 
           {showSearch && (
             <button

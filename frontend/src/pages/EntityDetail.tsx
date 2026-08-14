@@ -78,7 +78,7 @@ export default function EntityDetail() {
                     />
                     <div className="p-6 pt-10">
                       <p className="font-mono text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2">ENTITY PROFILE</p>
-                      <h1 className="text-4xl font-display font-bold uppercase leading-none text-black break-words">
+                      <h1 className="text-3xl sm:text-4xl font-display font-bold uppercase leading-none text-black break-words">
                         {data.node.name}
                       </h1>
                       <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -154,7 +154,7 @@ export default function EntityDetail() {
                   <div className="mb-5 flex flex-col justify-between gap-3 border-b border-black pb-4 sm:flex-row sm:items-end">
                     <div>
                       <p className="font-mono text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2">CONTEXT MAP</p>
-                      <h2 className="text-3xl font-display font-bold uppercase leading-none text-black break-words">
+                      <h2 className="text-2xl sm:text-3xl font-display font-bold uppercase leading-none text-black break-words">
                         Connections For {data.node.name}
                       </h2>
                       <p className="mt-3 font-mono text-sm uppercase text-black/70">
