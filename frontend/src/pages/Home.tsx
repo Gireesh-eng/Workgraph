@@ -465,7 +465,7 @@ export default function Home() {
                   <Link
                     key={p.code}
                     to={href}
-                    className="bg-transparent p-10 hover:bg-black hover:text-white transition-colors group flex flex-col justify-between h-[320px] border-b border-r border-gray-400 relative overflow-hidden"
+                    className="bg-transparent p-6 sm:p-10 hover:bg-black hover:text-white transition-colors group flex flex-col justify-between min-h-[260px] sm:h-[320px] border-b border-r border-gray-400 relative overflow-hidden"
                   >
                     <div className="absolute inset-0 grid-bg-brutal-dark pointer-events-none hidden group-hover:block" />
                     <div className="relative z-10 block">

@@ -56,16 +56,16 @@ export default function EntityDetail() {
             />
           ) : data ? (
             <>
-              <nav className="mb-8 flex items-center gap-3 text-[11px] font-mono font-bold uppercase tracking-widest text-black/50">
-                <Link className="hover:text-black transition-colors" to="/">
+              <nav className="mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-black/50 overflow-hidden">
+                <Link className="hover:text-black transition-colors shrink-0" to="/">
                   [HOME]
                 </Link>
-                <span className="text-black/30">/</span>
-                <Link className="hover:text-black transition-colors" to="/search">
+                <span className="text-black/30 shrink-0">/</span>
+                <Link className="hover:text-black transition-colors shrink-0" to="/search">
                   [SEARCH]
                 </Link>
-                <span className="text-black/30">/</span>
-                <span className="truncate text-black">[{data.node.name}]</span>
+                <span className="text-black/30 shrink-0">/</span>
+                <span className="truncate text-black min-w-0">[{data.node.name}]</span>
               </nav>
               <div className="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
                 <aside className="xl:sticky xl:top-20 xl:h-fit">

@@ -75,8 +75,8 @@ export default function SearchBar({ initialQuery = "", autoFocus = false, dark =
     <form onSubmit={e => { e.preventDefault(); setShowSuggestions(false); if (query.trim()) navigate(`/search?q=${encodeURIComponent(query.trim())}`); }} className="w-full">
       <div className={`flex h-11 items-center border focus-within:ring-1 ${dark ? "border-white/20 bg-[#0A0A0A] focus-within:ring-white" : "border-black bg-white focus-within:ring-black"}`}>
         <svg className={`ml-3.5 h-4 w-4 shrink-0 ${dark ? "text-white/70" : "text-black"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" /></svg>
-        <input ref={ref} value={query} onChange={e => { setQuery(e.target.value); setShowSuggestions(true); }} placeholder="SEARCH PEOPLE, PROJECTS, TASKS…" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" className={`h-full min-w-0 flex-1 bg-transparent px-3 text-[14px] font-mono outline-none ${dark ? "text-white placeholder:text-white/70" : "text-black placeholder:text-gray-500"}`} />
-        {query && <button type="button" onClick={() => { setQuery(""); setResults([]); }} aria-label="Clear search" className={`mr-2 font-mono text-lg font-bold ${dark ? "text-white/70 hover:text-white" : "text-gray-500 hover:text-black"}`}>×</button>}
+        <input ref={ref} value={query} onChange={e => { setQuery(e.target.value); setShowSuggestions(true); }} placeholder="SEARCH ENTITIES, TASKS, TEAMS…" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" className={`h-full min-w-0 flex-1 bg-transparent px-2 sm:px-3 text-[12px] sm:text-[14px] font-mono outline-none ${dark ? "text-white placeholder:text-white/70" : "text-black placeholder:text-gray-500"}`} />
+        {query && <button type="button" onClick={() => { setQuery(""); setResults([]); }} aria-label="Clear search" className={`mr-2 font-mono text-base sm:text-lg font-bold ${dark ? "text-white/70 hover:text-white" : "text-gray-500 hover:text-black"}`}>×</button>}
       </div>
     </form>
 
