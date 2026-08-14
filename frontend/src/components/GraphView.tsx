@@ -45,14 +45,21 @@ export default function GraphView({ centerNode, connections }: { centerNode: Gra
     }
   };
 
-  // Zoom handler (wheel)
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (!isFullscreen) return;
-    e.preventDefault();
-    setZoom(prev => {
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      return Math.min(4, Math.max(0.3, prev + delta));
-    });
+  // Zoom handler (wheel) via non-passive native listener to prevent console errors
+  useEffect(() => {
+    const container = graphContainerRef.current;
+    if (!container || !isFullscreen) return;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      setZoom(prev => {
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        return Math.min(4, Math.max(0.3, prev + delta));
+      });
+    };
+
+    container.addEventListener("wheel", onWheel, { passive: false });
+    return () => container.removeEventListener("wheel", onWheel);
   }, [isFullscreen]);
 
   // Pan handlers (mouse drag)
@@ -145,7 +152,6 @@ export default function GraphView({ centerNode, connections }: { centerNode: Gra
         ref={graphContainerRef}
         className={`relative overflow-hidden select-none ${isFullscreen ? "h-screen w-screen grid-bg-brutal bg-[#f4f4f4]" : "bg-transparent"}`}
         style={isFullscreen ? undefined : { height: `${containerHeight}px` }}
-        onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
